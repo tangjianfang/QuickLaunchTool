@@ -11,7 +11,7 @@ namespace QuickLaunchTool
         [STAThread]
         static void Main()
         {
-            // 启用VisualStyles
+            // Enable VisualStyles
             Application.EnableVisualStyles();
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.SetCompatibleTextRenderingDefault(false);

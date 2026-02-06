@@ -6,48 +6,48 @@ using Newtonsoft.Json;
 namespace QuickLaunchTool.Models
 {
     /// <summary>
-    /// 应用程序信息模型
+    /// Application information model
     /// </summary>
     public class AppInfo
     {
         /// <summary>
-        /// 应用名称
+        /// Display name of the application
         /// </summary>
         [JsonProperty("name")]
         public string Name { get; set; } = string.Empty;
 
         /// <summary>
-        /// 完整路径
+        /// Full file path
         /// </summary>
         [JsonProperty("fullPath")]
         public string FullPath { get; set; } = string.Empty;
 
         /// <summary>
-        /// 文件大小（字节）
+        /// File size in bytes
         /// </summary>
         [JsonProperty("fileSize")]
         public long FileSize { get; set; }
 
         /// <summary>
-        /// 最后修改时间
+        /// Last modification timestamp
         /// </summary>
         [JsonProperty("lastModified")]
         public DateTime LastModified { get; set; }
 
         /// <summary>
-        /// 使用次数
+        /// Usage count
         /// </summary>
         [JsonProperty("useCount")]
         public int UseCount { get; set; }
 
         /// <summary>
-        /// 图标资源（不序列化）
+        /// Icon resource (not serialized)
         /// </summary>
         [JsonIgnore]
         public Icon? Icon { get; set; }
 
         /// <summary>
-        /// 从文件路径创建AppInfo
+        /// Construct AppInfo from a file path
         /// </summary>
         public AppInfo(string filePath)
         {
@@ -61,12 +61,12 @@ namespace QuickLaunchTool.Models
         }
 
         /// <summary>
-        /// 无参构造函数（用于JSON反序列化）
+        /// Parameterless constructor used for JSON deserialization
         /// </summary>
         public AppInfo() { }
 
         /// <summary>
-        /// 克隆对象
+        /// Clone the AppInfo instance
         /// </summary>
         public AppInfo Clone()
         {
@@ -82,7 +82,7 @@ namespace QuickLaunchTool.Models
         }
 
         /// <summary>
-        /// 重写Equals方法
+        /// Compare AppInfo instances by path
         /// </summary>
         public override bool Equals(object? obj)
         {
@@ -92,7 +92,7 @@ namespace QuickLaunchTool.Models
         }
 
         /// <summary>
-        /// 重写GetHashCode方法
+        /// Generate hash code based on the path
         /// </summary>
         public override int GetHashCode()
         {

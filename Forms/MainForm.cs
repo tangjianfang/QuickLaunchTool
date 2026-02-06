@@ -12,7 +12,7 @@ using QuickLaunchTool.Utils;
 namespace QuickLaunchTool.Forms
 {
     /// <summary>
-    /// 主窗体
+    /// Main Form
     /// </summary>
     public partial class MainForm : Form
     {
@@ -25,7 +25,7 @@ namespace QuickLaunchTool.Forms
         private ToolStrip? _toolStrip;
         private HashSet<AppButton> _selectedButtons = new();
 
-        // 工具栏控件引用（用于更新本地化）
+        // Toolbar control references (for updating localization)
         private ToolStripLabel? _searchLabel;
         private ToolStripButton? _addFileBtn;
         private ToolStripButton? _addFolderBtn;
@@ -37,21 +37,17 @@ namespace QuickLaunchTool.Forms
         {
             InitializeComponent();
 
-            // 先订阅语言变更事件
             _localization.LanguageChanged += (s, e) => UpdateLocalization();
 
             SetupUI();
             LoadConfig();
-
-            // LoadConfig会加载配置文件中的语言设置，需要手动刷新UI
             UpdateLocalization();
 
-            // 订阅 Load 事件，在窗体加载后应用主题（此时 Handle 已创建）
             this.Load += MainForm_Load;
         }
 
         /// <summary>
-        /// 窗体加载事件 - 应用主题
+        /// Form Load event - Apply theme
         /// </summary>
         private void MainForm_Load(object? sender, EventArgs e)
         {
@@ -61,7 +57,7 @@ namespace QuickLaunchTool.Forms
         }
 
         /// <summary>
-        /// 初始化UI
+        /// Initialize UI
         /// </summary>
         private void SetupUI()
         {
@@ -70,10 +66,10 @@ namespace QuickLaunchTool.Forms
             this.StartPosition = FormStartPosition.CenterScreen;
             this.FormBorderStyle = FormBorderStyle.Sizable;
             this.MaximizeBox = true;
-            this.MinimumSize = new Size(250, 200);
+            this.MinimumSize = new Size(100, 100);
             this.BackColor = Color.White;
 
-            // 设置窗口图标
+            // Set window icon
             try
             {
                 var iconPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Ico", "QuickLaunchTool.ico");
@@ -84,7 +80,7 @@ namespace QuickLaunchTool.Forms
             }
             catch { }
 
-            // 创建工具栏
+            // Create toolbar
             _toolStrip = new ToolStrip
             {
                 Dock = DockStyle.Top
@@ -119,7 +115,7 @@ namespace QuickLaunchTool.Forms
             _toolStrip.Items.Add(new ToolStripSeparator());
             _toolStrip.Items.Add(_settingsBtn);
 
-            // 创建FlowLayoutPanel（内容区域）
+            // Create FlowLayoutPanel (content area)
             _flowLayoutPanel = new FlowLayoutPanel
             {
                 Dock = DockStyle.Fill,
@@ -128,16 +124,16 @@ namespace QuickLaunchTool.Forms
                 Padding = new Padding(3)
             };
 
-            // 添加控件到窗体
-            this.Controls.Add(_flowLayoutPanel);      // 内容
-            this.Controls.Add(_toolStrip);             // 工具栏
+            // Add controls to the form
+            this.Controls.Add(_flowLayoutPanel);      // Content
+            this.Controls.Add(_toolStrip);             // Toolbar
 
-            // 监听窗口大小改变事件，调整状态标签宽度
+            // Listen to window size change event
             this.SizeChanged += MainForm_SizeChanged;
         }
 
         /// <summary>
-        /// 窗口大小改变时调整状态标签宽度
+        /// Adjust status label width when window size changes
         /// </summary>
         private void MainForm_SizeChanged(object? sender, EventArgs e)
         {
@@ -152,7 +148,7 @@ namespace QuickLaunchTool.Forms
         }
 
         /// <summary>
-        /// 加载配置
+        /// Load configuration
         /// </summary>
         private void LoadConfig()
         {
@@ -172,20 +168,20 @@ namespace QuickLaunchTool.Forms
             this.TopMost = config.TopMost;
             this.Opacity = config.Opacity;
 
-            // 加载缓存的应用列表
+            // Load cached application list
             if (config.CachedAppPaths.Count > 0)
             {
                 LoadFromCache(config.CachedAppPaths);
             }
             else
             {
-                // 显示欢迎提示
-                DisplayWelcomeMessage();
+                // First launch: automatically import taskbar applications
+                ImportTaskbarPaths();
             }
         }
 
         /// <summary>
-        /// 从缓存加载应用列表
+        /// Load application list from cache
         /// </summary>
         private void LoadFromCache(List<string> cachedPaths)
         {
@@ -208,7 +204,7 @@ namespace QuickLaunchTool.Forms
                     }
                     else
                     {
-                        // 即使文件不存在也添加，用于显示提示
+                        // Add even if file doesn't exist, for showing tips
                         _appList.Add(new AppInfo
                         {
                             Name = Path.GetFileNameWithoutExtension(path),
@@ -226,12 +222,12 @@ namespace QuickLaunchTool.Forms
             }
             catch (Exception ex)
             {
-                Utils.Logger.Error($"从缓存加载失败: {ex.Message}");
+                Utils.Logger.Error($"Failed to load from cache: {ex.Message}");
             }
         }
 
         /// <summary>
-        /// 显示欢迎消息
+        /// Display welcome message
         /// </summary>
         private void DisplayWelcomeMessage()
         {
@@ -250,7 +246,7 @@ namespace QuickLaunchTool.Forms
         }
 
         /// <summary>
-        /// 添加文件按钮点击
+        /// Add file button click handler
         /// </summary>
         private void AddFileBtn_Click(object? sender, EventArgs e)
         {
@@ -278,7 +274,7 @@ namespace QuickLaunchTool.Forms
         }
 
         /// <summary>
-        /// 添加文件夹按钮点击
+        /// Add folder button click handler
         /// </summary>
         private async void AddFolderBtn_Click(object? sender, EventArgs e)
         {
@@ -297,7 +293,7 @@ namespace QuickLaunchTool.Forms
                 {
                     var folderPath = dialog.SelectedPath;
 
-                    // 显示加载提示
+                    // Show loading tip
                     if (_flowLayoutPanel != null)
                     {
                         var statusLabel = _flowLayoutPanel.Controls.OfType<Label>().FirstOrDefault();
@@ -307,7 +303,7 @@ namespace QuickLaunchTool.Forms
                         }
                     }
 
-                    // 扫描文件夹中的exe文件
+                    // Scan exe files in the folder
                     var exeFiles = await _fileScanner.ScanFolderAsync(folderPath, true);
 
                     if (exeFiles.Count > 0)
@@ -334,7 +330,7 @@ namespace QuickLaunchTool.Forms
         }
 
         /// <summary>
-        /// 添加文件到列表
+        /// Add files to list
         /// </summary>
         private void AddFiles(string[] filePaths)
         {
@@ -345,7 +341,7 @@ namespace QuickLaunchTool.Forms
                 if (!System.IO.File.Exists(path))
                     continue;
 
-                // 检查是否已存在
+                // Check if already exists
                 if (_appList.Any(a => a.FullPath.Equals(path, StringComparison.OrdinalIgnoreCase)))
                     continue;
 
@@ -367,7 +363,7 @@ namespace QuickLaunchTool.Forms
         }
 
         /// <summary>
-        /// 添加应用到列表
+        /// Add applications to list
         /// </summary>
         private void AddApps(List<AppInfo> apps)
         {
@@ -379,18 +375,18 @@ namespace QuickLaunchTool.Forms
                 }
             }
 
-            // 排序并显示
+            // Sort and display
             var config = _configManager.GetConfig();
             _appList = SortApps(_appList, config.SortMode);
             DisplayApps(_appList);
 
-            // 更新缓存
+            // Update cache
             config.CachedAppPaths = _appList.Select(a => a.FullPath).ToList();
             _configManager.UpdateConfig(config);
         }
 
         /// <summary>
-        /// 导入任务栏按钮点击
+        /// Import taskbar button click handler
         /// </summary>
         private void ImportTaskbarBtn_Click(object? sender, EventArgs e)
         {
@@ -408,7 +404,7 @@ namespace QuickLaunchTool.Forms
         }
 
         /// <summary>
-        /// 导入任务栏已锁定的应用路径
+        /// Import pinned application paths from taskbar
         /// </summary>
         private void ImportTaskbarPaths()
         {
@@ -436,7 +432,7 @@ namespace QuickLaunchTool.Forms
                     try
                     {
                         var targetPath = GetShortcutTarget(shortcut);
-                        // 只导入exe文件路径
+                        // Only import exe file paths
                         if (!string.IsNullOrEmpty(targetPath) &&
                             System.IO.File.Exists(targetPath) &&
                             targetPath.EndsWith(".exe", StringComparison.OrdinalIgnoreCase) &&
@@ -455,7 +451,7 @@ namespace QuickLaunchTool.Forms
                     }
                     catch
                     {
-                        // 跳过无法解析的快捷方式
+                        // Skip shortcuts that cannot be parsed
                     }
                 }
 
@@ -485,13 +481,13 @@ namespace QuickLaunchTool.Forms
         }
 
         /// <summary>
-        /// 获取快捷方式的目标路径
+        /// Get the target path of a shortcut
         /// </summary>
         private string GetShortcutTarget(string shortcutPath)
         {
             try
             {
-                // 使用Shell32 COM对象解析快捷方式
+                // Use Shell32 COM object to parse shortcuts
                 Type? shellType = Type.GetTypeFromProgID("WScript.Shell");
                 if (shellType == null) return string.Empty;
 
@@ -516,7 +512,7 @@ namespace QuickLaunchTool.Forms
         }
 
         /// <summary>
-        /// 删除选中的应用
+        /// Delete selected applications
         /// </summary>
         private void DeleteSelectedBtn_Click(object? sender, EventArgs e)
         {
@@ -547,18 +543,18 @@ namespace QuickLaunchTool.Forms
 
                 _selectedButtons.Clear();
 
-                // 更新缓存
+                // Update cache
                 var config = _configManager.GetConfig();
                 config.CachedAppPaths = _appList.Select(a => a.FullPath).ToList();
                 _configManager.UpdateConfig(config);
 
-                // 重新显示
+                // Refresh display
                 DisplayApps(_appList);
             }
         }
 
         /// <summary>
-        /// 排序应用列表
+        /// Sort application list
         /// </summary>
         private List<AppInfo> SortApps(List<AppInfo> apps, SortMode sortMode)
         {
@@ -572,7 +568,7 @@ namespace QuickLaunchTool.Forms
         }
 
         /// <summary>
-        /// 显示应用程序
+        /// Display applications
         /// </summary>
         private void DisplayApps(List<AppInfo> apps)
         {
@@ -581,25 +577,12 @@ namespace QuickLaunchTool.Forms
 
             _flowLayoutPanel.Controls.Clear();
 
-            // 添加状态标签（应用数量）
-            var statusLabel = new Label
-            {
-                Text = _localization.GetString("MainForm_StatusCount", apps.Count),
-                Width = _flowLayoutPanel.ClientSize.Width - 10,
-                Height = 16,
-                BackColor = Color.FromArgb(220, 220, 220),
-                Font = new Font("Microsoft YaHei", 8.5f, FontStyle.Bold),
-                Margin = new Padding(0, 0, 0, 2),
-                Anchor = AnchorStyles.Left | AnchorStyles.Right
-            };
-            _flowLayoutPanel.Controls.Add(statusLabel);
-            _flowLayoutPanel.SetFlowBreak(statusLabel, true); // 强制下一个控件换行
-
-            // 获取图标大小设置
+            // Get icon size settings
             var config = _configManager.GetConfig();
             var iconSize = config.IconSize;
+            int totalCount = _appList.Count; // Store total count for context menu
 
-            // 添加应用按钮
+            // Add application buttons
             foreach (var app in apps)
             {
                 var button = new AppButton
@@ -607,6 +590,7 @@ namespace QuickLaunchTool.Forms
                     AppInfo = app
                 };
                 button.SetIconSize(iconSize);
+                button.SetTotalAppCount(totalCount);
                 button.LaunchApp += (s, e) => SaveConfig();
                 button.RemoveFromList += (s, e) => RemoveAppFromList(app);
                 button.SelectionChanged += Button_SelectionChanged;
@@ -615,7 +599,7 @@ namespace QuickLaunchTool.Forms
         }
 
         /// <summary>
-        /// 按钮选择状态改变
+        /// Button selection state changed
         /// </summary>
         private void Button_SelectionChanged(object? sender, EventArgs e)
         {
@@ -633,24 +617,24 @@ namespace QuickLaunchTool.Forms
         }
 
         /// <summary>
-        /// 从列表移除应用
+        /// Remove application from list
         /// </summary>
         private void RemoveAppFromList(AppInfo app)
         {
             if (_appList.Remove(app))
             {
-                // 更新缓存
+                // Update cache
                 var config = _configManager.GetConfig();
                 config.CachedAppPaths = _appList.Select(a => a.FullPath).ToList();
                 _configManager.UpdateConfig(config);
 
-                // 重新显示
+                // Refresh display
                 DisplayApps(_appList);
             }
         }
 
         /// <summary>
-        /// 过滤搜索
+        /// Search filter
         /// </summary>
         private void SearchBox_TextChanged(object? sender, EventArgs e)
         {
@@ -663,11 +647,11 @@ namespace QuickLaunchTool.Forms
         }
 
         /// <summary>
-        /// 设置按钮点击
+        /// Settings button click handler
         /// </summary>
         private void SettingsBtn_Click(object? sender, EventArgs e)
         {
-            // 临时禁用 TopMost 以避免对话框被压在后面
+            // Temporarily disable TopMost to prevent dialog from being hidden
             bool wasTopMost = this.TopMost;
             this.TopMost = false;
 
@@ -676,34 +660,34 @@ namespace QuickLaunchTool.Forms
                 var settingsForm = new SettingsForm();
                 if (settingsForm.ShowDialog(this) == DialogResult.OK)
                 {
-                    // 设置完成后，重新加载配置并应用
+                    // After settings, reload configuration and apply
                     var config = _configManager.GetConfig();
 
-                    // 应用语言设置（这会触发界面更新）
+                    // Apply language settings (this will trigger UI update)
                     _localization.SetLanguage(config.Language);
 
-                    // 应用主题设置
+                    // Apply theme settings
                     bool darkTheme = config.Theme == QuickLaunchTool.Models.ThemeMode.Dark;
                     ThemeManager.ApplyTheme(this, darkTheme);
 
                     this.TopMost = config.TopMost;
                     this.Opacity = config.Opacity;
 
-                    // 重新排序和显示（应用图标大小和排序方式的变化）
+                    // Re-sort and display (apply icon size and sort mode changes)
                     _appList = SortApps(_appList, config.SortMode);
                     DisplayApps(_appList);
                 }
             }
             finally
             {
-                // 恢复 TopMost 状态
+                // Restore TopMost state
                 var config = _configManager.GetConfig();
                 this.TopMost = config.TopMost;
             }
         }
 
         /// <summary>
-        /// 保存配置
+        /// Save configuration
         /// </summary>
         private void SaveConfig()
         {
@@ -714,7 +698,7 @@ namespace QuickLaunchTool.Forms
         }
 
         /// <summary>
-        /// 更新界面本地化文本
+        /// Update UI localization text
         /// </summary>
         private void UpdateLocalization()
         {
@@ -767,7 +751,7 @@ namespace QuickLaunchTool.Forms
         }
 
         /// <summary>
-        /// 初始化组件（由设计器生成）
+        /// Initialize component (generated by designer)
         /// </summary>
         private void InitializeComponent()
         {

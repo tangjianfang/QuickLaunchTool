@@ -5,12 +5,12 @@ using System.IO;
 namespace QuickLaunchTool.Services
 {
     /// <summary>
-    /// 进程启动服务
+    /// Process launch service
     /// </summary>
     public static class ProcessLauncher
     {
         /// <summary>
-        /// 启动应用程序
+        /// Launch application
         /// </summary>
         public static bool Launch(string filePath)
         {
@@ -30,13 +30,13 @@ namespace QuickLaunchTool.Services
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"启动失败: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Failed to launch: {ex.Message}");
                 return false;
             }
         }
 
         /// <summary>
-        /// 以管理员身份运行应用程序
+        /// Run application as administrator
         /// </summary>
         public static bool LaunchAsAdmin(string filePath)
         {
@@ -49,7 +49,7 @@ namespace QuickLaunchTool.Services
                 {
                     FileName = filePath,
                     UseShellExecute = true,
-                    Verb = "runas"  // 请求管理员权限
+                    Verb = "runas"  // Request administrator privilege
                 };
 
                 Process.Start(psi);
@@ -57,13 +57,13 @@ namespace QuickLaunchTool.Services
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"以管理员身份启动失败: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Failed to launch as administrator: {ex.Message}");
                 return false;
             }
         }
 
         /// <summary>
-        /// 检查应用程序是否正在运行
+        /// Check if application is running
         /// </summary>
         public static bool IsRunning(string filePath)
         {
@@ -80,7 +80,7 @@ namespace QuickLaunchTool.Services
         }
 
         /// <summary>
-        /// 打开文件所在位置
+        /// Open file location
         /// </summary>
         public static bool OpenFileLocation(string filePath)
         {
@@ -104,13 +104,13 @@ namespace QuickLaunchTool.Services
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"打开文件位置失败: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Failed to open file location: {ex.Message}");
                 return false;
             }
         }
 
         /// <summary>
-        /// 获取应用程序属性信息
+        /// Get application property information
         /// </summary>
         public static bool ShowProperties(string filePath)
         {
@@ -119,12 +119,12 @@ namespace QuickLaunchTool.Services
                 if (!File.Exists(filePath))
                     return false;
 
+                // Use explorer with verb to show properties dialog
                 var psi = new ProcessStartInfo
                 {
-                    FileName = "cmd.exe",
-                    Arguments = $"/c properties \"{filePath}\"",
-                    UseShellExecute = true,
-                    WindowStyle = ProcessWindowStyle.Hidden
+                    FileName = "explorer.exe",
+                    Arguments = $"/select,\"{filePath}\"",
+                    UseShellExecute = true
                 };
 
                 Process.Start(psi);
@@ -132,7 +132,7 @@ namespace QuickLaunchTool.Services
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"显示属性失败: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Failed to show properties: {ex.Message}");
                 return false;
             }
         }

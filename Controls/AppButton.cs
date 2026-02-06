@@ -8,7 +8,7 @@ using QuickLaunchTool.Utils;
 namespace QuickLaunchTool.Controls
 {
     /// <summary>
-    /// 应用按钮自定义控件
+    /// Custom application button control
     /// </summary>
     public partial class AppButton : UserControl
     {
@@ -18,9 +18,10 @@ namespace QuickLaunchTool.Controls
         private bool _isSelected = false;
         private IconSize _iconSize = IconSize.Large;
         private ContextMenuStrip? _contextMenu;
+        private int _totalAppCount = 0; // Total count of applications
 
         /// <summary>
-        /// 获取或设置绑定的应用信息
+        /// Get or set bound application information
         /// </summary>
         public AppInfo? AppInfo
         {
@@ -33,7 +34,7 @@ namespace QuickLaunchTool.Controls
         }
 
         /// <summary>
-        /// 获取或设置选中状态
+        /// Get or set selection status
         /// </summary>
         public bool Selected
         {
@@ -46,17 +47,17 @@ namespace QuickLaunchTool.Controls
         }
 
         /// <summary>
-        /// 启动应用事件
+        /// Launch application event
         /// </summary>
         public event EventHandler? LaunchApp;
 
         /// <summary>
-        /// 从列表移除事件
+        /// Remove from list event
         /// </summary>
         public event EventHandler? RemoveFromList;
 
         /// <summary>
-        /// 选择状态改变事件
+        /// Selection status changed event
         /// </summary>
         public event EventHandler? SelectionChanged;
 
@@ -81,7 +82,7 @@ namespace QuickLaunchTool.Controls
         }
 
         /// <summary>
-        /// 设置图标大小
+        /// Set icon size
         /// </summary>
         public void SetIconSize(IconSize iconSize)
         {
@@ -102,20 +103,28 @@ namespace QuickLaunchTool.Controls
         }
 
         /// <summary>
-        /// 更新显示
+        /// Set total application count
+        /// </summary>
+        public void SetTotalAppCount(int count)
+        {
+            _totalAppCount = count;
+        }
+
+        /// <summary>
+        /// Update display
         /// </summary>
         private void UpdateDisplay()
         {
             if (_appInfo != null)
             {
-                // 异步加载图标
+                // Asynchronously load icon
                 LoadIconAsync();
                 Invalidate();
             }
         }
 
         /// <summary>
-        /// 异步加载图标
+        /// Load icon asynchronously
         /// </summary>
         private async void LoadIconAsync()
         {
@@ -128,7 +137,7 @@ namespace QuickLaunchTool.Controls
 
         protected override void OnPaint(PaintEventArgs e)
         {
-            // 设置高质量渲染
+            // Set high quality rendering
             e.Graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
             e.Graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
             e.Graphics.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
@@ -138,20 +147,20 @@ namespace QuickLaunchTool.Controls
             if (_appInfo == null)
                 return;
 
-            // 检查文件是否存在
+            // Check if file exists
             bool fileExists = System.IO.File.Exists(_appInfo.FullPath);
 
-            // 获取父容器背景色（用于主题支持）
+            // Get parent container background color (for theme support)
             Color parentBgColor = this.Parent?.BackColor ?? Color.White;
             bool isDark = parentBgColor.GetBrightness() < 0.5f;
 
-            // 绘制背景
+            // Draw background
             Color bgColor = parentBgColor;
             if (_isSelected)
-                bgColor = Color.FromArgb(180, 200, 255); // 选中状态是蓝色
+                bgColor = Color.FromArgb(180, 200, 255); // Selection state is blue
             else if (_isHovered)
             {
-                // 悬停状态：根据父容器背景色判断是深色还是浅色主题
+                // Hover state: determine light or dark theme based on parent background color
                 bgColor = isDark ? Color.FromArgb(60, 60, 65) : Color.FromArgb(220, 230, 240);
             }
 
@@ -160,7 +169,7 @@ namespace QuickLaunchTool.Controls
                 e.Graphics.FillRectangle(bgBrush, ClientRectangle);
             }
 
-            // 如果被选中，绘制边框
+            // If selected, draw border
             if (_isSelected)
             {
                 using (var pen = new Pen(Color.FromArgb(100, 120, 200), 2))
@@ -169,7 +178,7 @@ namespace QuickLaunchTool.Controls
                 }
             }
 
-            // 如果文件不存在，绘制半透明遮罩
+            // If file doesn't exist, draw semi-transparent mask
             if (!fileExists)
             {
                 using (var maskBrush = new SolidBrush(Color.FromArgb(150, 255, 255, 255)))
@@ -201,28 +210,28 @@ namespace QuickLaunchTool.Controls
                             break;
                     }
 
-                    // 创建一个透明背景的临时Bitmap来渲染图标
+                    // Create temporary Bitmap with transparent background to render icon
                     using (var tempBitmap = new Bitmap(iconRect.Width, iconRect.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb))
                     {
                         using (var g = Graphics.FromImage(tempBitmap))
                         {
-                            // 设置透明背景
+                            // Set transparent background
                             g.Clear(Color.Transparent);
                             g.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver;
                             g.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
                             g.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
                             g.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 
-                            // 在临时位图上绘制图标
+                            // Draw icon on temporary bitmap
                             g.DrawIcon(_appInfo.Icon, new Rectangle(0, 0, iconRect.Width, iconRect.Height));
                         }
 
-                        // 如果文件不存在，使用半透明绘制
+                        // If file doesn't exist, use semi-transparent drawing
                         if (!fileExists)
                         {
                             var colorMatrix = new System.Drawing.Imaging.ColorMatrix
                             {
-                                Matrix33 = 0.4f // 透明度40%
+                                Matrix33 = 0.4f // Transparency 40%
                             };
                             var imageAttributes = new System.Drawing.Imaging.ImageAttributes();
                             imageAttributes.SetColorMatrix(colorMatrix);
@@ -230,14 +239,14 @@ namespace QuickLaunchTool.Controls
                         }
                         else
                         {
-                            // 将临时位图绘制到控件上
+                            // Draw temporary bitmap to control
                             e.Graphics.DrawImage(tempBitmap, iconRect);
                         }
                     }
                 }
                 catch
                 {
-                    // 降级处理：直接绘制图标
+                    // Degraded handling: draw icon directly
                     Rectangle iconRect;
                     switch (_iconSize)
                     {
@@ -258,7 +267,7 @@ namespace QuickLaunchTool.Controls
                 }
             }
 
-            // 如果文件不存在，绘制红色边框和警告标记
+            // If file doesn't exist, draw red border and warning mark
             if (!fileExists)
             {
                 using (var pen = new Pen(Color.FromArgb(200, 255, 0, 0), 2))
@@ -266,7 +275,7 @@ namespace QuickLaunchTool.Controls
                     e.Graphics.DrawRectangle(pen, 1, 1, Width - 3, Height - 3);
                 }
 
-                // 绘制警告图标
+                // Draw warning icon
                 using (var warningBrush = new SolidBrush(Color.FromArgb(220, 255, 0, 0)))
                 using (var warningFont = new Font("Arial", 9, FontStyle.Bold))
                 {
@@ -274,7 +283,7 @@ namespace QuickLaunchTool.Controls
                 }
             }
 
-            // 绘制应用名称 - 居中显示
+            // Draw application name - centered
             var font = new Font(Font.FontFamily, 6.8f, FontStyle.Regular);
             var textRect = new Rectangle(2, 40, Width - 4, Height - 42);
             var stringFormat = new StringFormat
@@ -285,11 +294,11 @@ namespace QuickLaunchTool.Controls
                 FormatFlags = StringFormatFlags.NoWrap
             };
 
-            // 根据主题选择文本颜色
+            // Choose text color based on theme
             Color textColor;
             if (!fileExists)
             {
-                textColor = Color.FromArgb(150, 255, 0, 0); // 文件不存在时用红色
+                textColor = Color.FromArgb(150, 255, 0, 0); // File doesn't exist, use red
             }
             else
             {
@@ -320,11 +329,11 @@ namespace QuickLaunchTool.Controls
 
         protected override void OnClick(EventArgs e)
         {
-            // 如枟按下Ctrl键，切换选中状态
+            // If Ctrl key is pressed, toggle selection state
             if (ModifierKeys.HasFlag(Keys.Control))
             {
                 Selected = !Selected;
-                Invalidate(); // 触发重绘显示选中效果
+                Invalidate(); // Trigger redraw to show selection effect
                 SelectionChanged?.Invoke(this, EventArgs.Empty);
             }
             base.OnClick(e);
@@ -334,19 +343,19 @@ namespace QuickLaunchTool.Controls
         {
             if (_appInfo != null)
             {
-                // 检查文件是否存在
+                // Check if file exists
                 if (!System.IO.File.Exists(_appInfo.FullPath))
                 {
                     MessageBox.Show(
-                        $"应用程序不存在:\n{_appInfo.FullPath}\n\n请重新扫描或从列表中移除此项。",
-                        "文件不存在",
+                        $"Application does not exist:\n{_appInfo.FullPath}\n\nPlease rescan or remove this item from the list.",
+                        "File Not Found",
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Warning
                     );
                     return;
                 }
 
-                // 双击启动应用
+                // Double-click to launch application
                 ProcessLauncher.Launch(_appInfo.FullPath);
                 _appInfo.UseCount++;
                 LaunchApp?.Invoke(this, EventArgs.Empty);
@@ -364,14 +373,14 @@ namespace QuickLaunchTool.Controls
         }
 
         /// <summary>
-        /// 显示右键菜单
+        /// Display context menu
         /// </summary>
         private void ShowContextMenu(Point location)
         {
             if (_appInfo == null)
                 return;
 
-            // 重建菜单以支持本地化
+            // Rebuild menu to support localization
             _contextMenu = new ContextMenuStrip();
 
             _contextMenu.Items.Add(_localization.GetString("AppButton_MenuLaunch"), null, (s, e) => ProcessLauncher.Launch(_appInfo.FullPath));
@@ -379,6 +388,13 @@ namespace QuickLaunchTool.Controls
             _contextMenu.Items.Add("-");
             _contextMenu.Items.Add(_localization.GetString("AppButton_MenuOpenLocation"), null, (s, e) => ProcessLauncher.OpenFileLocation(_appInfo.FullPath));
             _contextMenu.Items.Add(_localization.GetString("AppButton_MenuProperties"), null, (s, e) => ProcessLauncher.ShowProperties(_appInfo.FullPath));
+            _contextMenu.Items.Add("-");
+
+            // Add total count menu item (disabled, info only)
+            var totalCountItem = new ToolStripMenuItem($"Total: {_totalAppCount}");
+            totalCountItem.Enabled = false;
+            _contextMenu.Items.Add(totalCountItem);
+
             _contextMenu.Items.Add("-");
             _contextMenu.Items.Add(_localization.GetString("AppButton_MenuRemove"), null, (s, e) =>
             {
@@ -398,12 +414,12 @@ namespace QuickLaunchTool.Controls
         }
 
         /// <summary>
-        /// 更新本地化（用于语言热切换）
+        /// Update localization (for language hot switching)
         /// </summary>
         public void UpdateLocalization()
         {
-            // 右键菜单在显示时重建，无需额外处理
-            // 如果需要更新控件上的文本，在此处理
+            // Context menu is rebuilt when displayed, no extra handling needed
+            // If you need to update text on controls, handle it here
         }
     }
 }

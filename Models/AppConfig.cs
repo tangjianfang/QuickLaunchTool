@@ -9,103 +9,103 @@ using Newtonsoft.Json;
 namespace QuickLaunchTool.Models
 {
     /// <summary>
-    /// 排序方式枚举
+    /// Sorting mode options
     /// </summary>
     public enum SortMode
     {
-        Name,       // 按名称排序
-        Modified,   // 按修改时间排序
-        UseCount    // 按使用次数排序
+        Name,       // Sort by name
+        Modified,   // Sort by last modified date
+        UseCount    // Sort by usage count
     }
 
     /// <summary>
-    /// 主题枚举
+    /// Themes supported by the app
     /// </summary>
     public enum ThemeMode
     {
-        Light,      // 浅色主题
-        Dark        // 深色主题
+        Light,      // Light theme
+        Dark        // Dark theme
     }
 
     /// <summary>
-    /// 图标大小枚举
+    /// Icon size presets
     /// </summary>
     public enum IconSize
     {
-        Large,      // 大图标 (50x60)
-        Medium,     // 中图标 (40x50)
-        Small       // 小图标 (30x40)
+        Large,      // Large icon (50x60)
+        Medium,     // Medium icon (40x50)
+        Small       // Small icon (30x40)
     }
 
     /// <summary>
-    /// 应用配置模型
+    /// App configuration model
     /// </summary>
     public class AppConfig
     {
         /// <summary>
-        /// 排序方式
+        /// Sorting mode currently in use
         /// </summary>
         [JsonProperty("sortMode")]
         public SortMode SortMode { get; set; } = SortMode.Name;
 
         /// <summary>
-        /// 主题模式
+        /// Theme mode currently in use
         /// </summary>
         [JsonProperty("theme")]
         public ThemeMode Theme { get; set; } = ThemeMode.Light;
 
         /// <summary>
-        /// 窗口位置
+        /// Window position
         /// </summary>
         [JsonProperty("windowPosition")]
         public Point WindowPosition { get; set; } = new Point(100, 100);
 
         /// <summary>
-        /// 窗口大小
+        /// Window size
         /// </summary>
         [JsonProperty("windowSize")]
         public Size WindowSize { get; set; } = new Size(600, 400);
 
         /// <summary>
-        /// 窗口置顶
+        /// Whether the window stays on top
         /// </summary>
         [JsonProperty("topMost")]
         public bool TopMost { get; set; } = true;
 
         /// <summary>
-        /// 窗口不透明度（0-1）
+        /// Window opacity (0-1)
         /// </summary>
         [JsonProperty("opacity")]
         public double Opacity { get; set; } = 0.95;
 
         /// <summary>
-        /// 图标大小
+        /// Icon size setting
         /// </summary>
         [JsonProperty("iconSize")]
         public IconSize IconSize { get; set; } = IconSize.Large;
 
         /// <summary>
-        /// 界面语言（如 zh-CN, en-US）
+        /// Interface language (e.g., zh-CN, en-US)
         /// </summary>
         [JsonProperty("language")]
         public string Language { get; set; } = CultureInfo.CurrentUICulture.Name;
 
         /// <summary>
-        /// 缓存的应用程序路径列表
+        /// Cached application path list
         /// </summary>
         [JsonProperty("cachedAppPaths")]
         public List<string> CachedAppPaths { get; set; } = new();
 
         /// <summary>
-        /// 验证配置的有效性
+        /// Validate the configuration values
         /// </summary>
         public bool Validate()
         {
-            // 检查窗口大小的合理性
+            // Ensure window dimensions are reasonable
             if (WindowSize.Width < 200 || WindowSize.Height < 200)
                 return false;
 
-            // 检查不透明度范围
+            // Ensure opacity stays within bounds
             if (Opacity < 0 || Opacity > 1)
                 return false;
 
@@ -113,14 +113,14 @@ namespace QuickLaunchTool.Models
         }
 
         /// <summary>
-        /// 获取默认配置
+        /// Create the default configuration
         /// </summary>
         public static AppConfig GetDefault()
         {
-            // 获取系统语言，如果不在支持的语言列表中则使用中文
+            // Derive the language from the system settings and fall back to English if unsupported
             var systemLang = CultureInfo.CurrentUICulture.Name;
             var supportedLangs = new[] { "zh-CN", "en-US", "ja-JP", "ko-KR", "fr-FR", "de-DE", "es-ES" };
-            var defaultLang = "zh-CN";
+            var defaultLang = "en-US";
 
             foreach (var lang in supportedLangs)
             {
@@ -134,12 +134,12 @@ namespace QuickLaunchTool.Models
             return new AppConfig
             {
                 SortMode = SortMode.Name,
-                Theme = ThemeMode.Light,
+                Theme = ThemeMode.Dark,
                 WindowPosition = new Point(100, 100),
                 WindowSize = new Size(600, 400),
                 TopMost = true,
-                Opacity = 0.95,
-                IconSize = IconSize.Large,
+                Opacity = 1.0,
+                IconSize = IconSize.Medium,
                 Language = defaultLang
             };
         }

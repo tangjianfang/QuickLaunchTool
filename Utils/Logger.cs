@@ -4,7 +4,7 @@ using System.IO;
 namespace QuickLaunchTool.Utils
 {
     /// <summary>
-    /// 日志记录器
+    /// Logger
     /// </summary>
     public static class Logger
     {
@@ -23,7 +23,7 @@ namespace QuickLaunchTool.Utils
         }
 
         /// <summary>
-        /// 记录信息
+        /// Log information
         /// </summary>
         public static void Info(string message)
         {
@@ -31,7 +31,7 @@ namespace QuickLaunchTool.Utils
         }
 
         /// <summary>
-        /// 记录警告
+        /// Log warning
         /// </summary>
         public static void Warning(string message)
         {
@@ -39,7 +39,7 @@ namespace QuickLaunchTool.Utils
         }
 
         /// <summary>
-        /// 记录错误
+        /// Log error
         /// </summary>
         public static void Error(string message)
         {
@@ -47,7 +47,7 @@ namespace QuickLaunchTool.Utils
         }
 
         /// <summary>
-        /// 记录异常
+        /// Log exception
         /// </summary>
         public static void Exception(Exception ex)
         {
@@ -64,7 +64,7 @@ namespace QuickLaunchTool.Utils
             }
             catch
             {
-                // 日志写入失败，忽略
+                // Log write failed, ignore
             }
         }
     }

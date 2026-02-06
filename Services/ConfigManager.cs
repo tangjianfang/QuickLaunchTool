@@ -7,7 +7,7 @@ using QuickLaunchTool.Utils;
 namespace QuickLaunchTool.Services
 {
     /// <summary>
-    /// 配置管理服务
+    /// Configuration management service
     /// </summary>
     public sealed class ConfigManager
     {
@@ -18,7 +18,7 @@ namespace QuickLaunchTool.Services
         private readonly string _configPath;
 
         /// <summary>
-        /// 获取单例实例
+        /// Get singleton instance
         /// </summary>
         public static ConfigManager Instance
         {
@@ -49,7 +49,7 @@ namespace QuickLaunchTool.Services
         }
 
         /// <summary>
-        /// 加载配置
+        /// Load configuration
         /// </summary>
         public bool Load()
         {
@@ -58,7 +58,7 @@ namespace QuickLaunchTool.Services
                 if (!File.Exists(_configPath))
                 {
                     _config = AppConfig.GetDefault();
-                    // 初始化本地化管理器
+                    // Initialize localization manager
                     LocalizationManager.Instance.SetLanguage(_config.Language);
                     Save();
                     return true;
@@ -70,31 +70,31 @@ namespace QuickLaunchTool.Services
                 if (loaded != null && loaded.Validate())
                 {
                     _config = loaded;
-                    // 初始化本地化管理器
+                    // Initialize localization manager
                     LocalizationManager.Instance.SetLanguage(_config.Language);
                     return true;
                 }
                 else
                 {
-                    // 配置无效，恢复默认
+                    // Invalid configuration, restore default
                     _config = AppConfig.GetDefault();
-                    // 初始化本地化管理器
+                    // Initialize localization manager
                     LocalizationManager.Instance.SetLanguage(_config.Language);
                     return false;
                 }
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"加载配置失败: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Failed to load configuration: {ex.Message}");
                 _config = AppConfig.GetDefault();
-                // 初始化本地化管理器
+                // Initialize localization manager
                 LocalizationManager.Instance.SetLanguage(_config.Language);
                 return false;
             }
         }
 
         /// <summary>
-        /// 保存配置
+        /// Save configuration
         /// </summary>
         public bool Save()
         {
@@ -112,13 +112,13 @@ namespace QuickLaunchTool.Services
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"保存配置失败: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Failed to save configuration: {ex.Message}");
                 return false;
             }
         }
 
         /// <summary>
-        /// 恢复默认配置
+        /// Restore default configuration
         /// </summary>
         public void Reset()
         {
@@ -127,7 +127,7 @@ namespace QuickLaunchTool.Services
         }
 
         /// <summary>
-        /// 获取当前配置
+        /// Get current configuration
         /// </summary>
         public AppConfig GetConfig()
         {
@@ -135,7 +135,7 @@ namespace QuickLaunchTool.Services
         }
 
         /// <summary>
-        /// 更新配置
+        /// Update configuration
         /// </summary>
         public void UpdateConfig(AppConfig config)
         {
@@ -148,7 +148,7 @@ namespace QuickLaunchTool.Services
         }
 
         /// <summary>
-        /// 获取配置路径
+        /// Get configuration path
         /// </summary>
         public string GetConfigPath()
         {

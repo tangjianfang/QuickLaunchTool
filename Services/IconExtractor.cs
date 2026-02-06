@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace QuickLaunchTool.Services
 {
     /// <summary>
-    /// 图标提取服务
+    /// Icon extraction service
     /// </summary>
     public static class IconExtractor
     {
@@ -28,17 +28,17 @@ namespace QuickLaunchTool.Services
                 if (!File.Exists(filePath))
                     return GetDefaultIcon();
 
-                // 方法1：使用内置Icon.ExtractAssociatedIcon
+                // Method 1: Use built-in Icon.ExtractAssociatedIcon
                 var icon = Icon.ExtractAssociatedIcon(filePath);
                 if (icon != null)
                     return icon;
             }
             catch
             {
-                // 内置方法失败，尝试P/Invoke方法
+                // Built-in method failed, try P/Invoke method
             }
 
-            // 方法2：使用P/Invoke
+            // Method 2: Use P/Invoke
             try
             {
                 IntPtr[] largeIcons = new IntPtr[1];
@@ -49,20 +49,20 @@ namespace QuickLaunchTool.Services
                 if (iconCount > 0 && largeIcons[0] != IntPtr.Zero)
                 {
                     var icon = Icon.FromHandle(largeIcons[0]);
-                    // 注意：这里不销毁图标指针，因为Icon对象需要它
+                    // Note: Do not destroy icon pointer here, as Icon object needs it
                     return icon;
                 }
             }
             catch
             {
-                // P/Invoke方法也失败
+                // P/Invoke method also failed
             }
 
             return GetDefaultIcon();
         }
 
         /// <summary>
-        /// 获取默认图标
+        /// Get default icon
         /// </summary>
         public static Icon GetDefaultIcon()
         {
@@ -72,13 +72,13 @@ namespace QuickLaunchTool.Services
             }
             catch
             {
-                // 如果无法获取系统图标，返回一个简单的图标
+                // If unable to get system icon, return a simple icon
                 return new Icon(SystemIcons.Exclamation, new Size(32, 32));
             }
         }
 
         /// <summary>
-        /// 异步提取图标
+        /// Extract icon asynchronously
         /// </summary>
         public static async Task<Icon?> ExtractIconAsync(string filePath, int iconIndex = 0)
         {

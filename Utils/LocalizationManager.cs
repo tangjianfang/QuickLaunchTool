@@ -6,7 +6,7 @@ using System.Reflection;
 namespace QuickLaunchTool.Utils
 {
     /// <summary>
-    /// 本地化管理器 - 负责管理多语言资源
+    /// Localization manager - Responsible for managing multilingual resources
     /// </summary>
     public sealed class LocalizationManager
     {
@@ -16,20 +16,20 @@ namespace QuickLaunchTool.Utils
         private ResourceManager? _resourceManager;
         private CultureInfo _currentCulture;
 
-        // 支持的语言列表
+        // Supported language list
         private static readonly string[] SupportedLanguages = new[]
         {
-            "zh-CN", // 简体中文
-            "en-US", // 英语
-            "ja-JP", // 日语
-            "ko-KR", // 韩语
-            "fr-FR", // 法语
-            "de-DE", // 德语
-            "es-ES"  // 西班牙语
+            "zh-CN", // Simplified Chinese
+            "en-US", // English
+            "ja-JP", // Japanese
+            "ko-KR", // Korean
+            "fr-FR", // French
+            "de-DE", // German
+            "es-ES"  // Spanish
         };
 
         /// <summary>
-        /// 获取单例实例
+        /// Get singleton instance
         /// </summary>
         public static LocalizationManager Instance
         {
@@ -50,23 +50,23 @@ namespace QuickLaunchTool.Utils
         }
 
         /// <summary>
-        /// 语言变更事件
+        /// Language change event
         /// </summary>
         public event EventHandler? LanguageChanged;
 
         /// <summary>
-        /// 当前语言代码
+        /// Current language code
         /// </summary>
         public string CurrentLanguage => _currentCulture.Name;
 
         /// <summary>
-        /// 获取支持的语言列表
+        /// Get list of supported languages
         /// </summary>
         public string[] GetSupportedLanguages() => SupportedLanguages;
 
         private LocalizationManager()
         {
-            // 初始化为系统默认语言，如果不支持则使用中文
+            // Initialize to system default language, if not supported use Chinese
             var systemLanguage = CultureInfo.CurrentUICulture.Name;
             var defaultLanguage = IsSupportedLanguage(systemLanguage) ? systemLanguage : "zh-CN";
             _currentCulture = new CultureInfo(defaultLanguage);
@@ -75,7 +75,7 @@ namespace QuickLaunchTool.Utils
         }
 
         /// <summary>
-        /// 初始化资源管理器
+        /// Initialize resource manager
         /// </summary>
         private void InitializeResourceManager()
         {
@@ -87,37 +87,37 @@ namespace QuickLaunchTool.Utils
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"初始化资源管理器失败: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Failed to initialize resource manager: {ex.Message}");
             }
         }
 
         /// <summary>
-        /// 设置当前语言
+        /// Set current language
         /// </summary>
-        /// <param name="languageCode">语言代码（如 zh-CN, en-US）</param>
+        /// <param name="languageCode">Language code (e.g. zh-CN, en-US)</param>
         public void SetLanguage(string languageCode)
         {
             if (string.IsNullOrEmpty(languageCode))
                 return;
 
-            // 如果语言不支持，回退到中文
+            // If language is not supported, fall back to Chinese
             if (!IsSupportedLanguage(languageCode))
             {
                 languageCode = "zh-CN";
             }
 
-            // 如果语言没有变化，不触发事件
+            // If language hasn't changed, don't trigger event
             if (_currentCulture.Name == languageCode)
                 return;
 
             _currentCulture = new CultureInfo(languageCode);
 
-            // 触发语言变更事件
+            // Trigger language change event
             LanguageChanged?.Invoke(this, EventArgs.Empty);
         }
 
         /// <summary>
-        /// 检查语言是否支持
+        /// Check if language is supported
         /// </summary>
         private bool IsSupportedLanguage(string languageCode)
         {
@@ -130,11 +130,11 @@ namespace QuickLaunchTool.Utils
         }
 
         /// <summary>
-        /// 获取本地化字符串
+        /// Get localized string
         /// </summary>
-        /// <param name="key">资源键</param>
-        /// <param name="args">格式化参数</param>
-        /// <returns>本地化后的字符串</returns>
+        /// <param name="key">Resource key</param>
+        /// <param name="args">Format parameters</param>
+        /// <returns>Localized string</returns>
         public string GetString(string key, params object[] args)
         {
             if (string.IsNullOrEmpty(key))
@@ -146,17 +146,17 @@ namespace QuickLaunchTool.Utils
 
                 if (value == null)
                 {
-                    // 如果找不到资源，尝试使用默认语言（中文）
+                    // If resource not found, try using default language (Chinese)
                     value = _resourceManager?.GetString(key, new CultureInfo("zh-CN"));
                 }
 
                 if (value == null)
                 {
-                    // 如果还是找不到，返回键名
+                    // If still not found, return key name
                     return $"[{key}]";
                 }
 
-                // 如果有参数，进行格式化
+                // If parameters exist, format
                 if (args != null && args.Length > 0)
                 {
                     return string.Format(value, args);
@@ -166,16 +166,16 @@ namespace QuickLaunchTool.Utils
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"获取资源字符串失败 [{key}]: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Failed to get resource string [{key}]: {ex.Message}");
                 return $"[{key}]";
             }
         }
 
         /// <summary>
-        /// 获取枚举的显示名称
+        /// Get enum display name
         /// </summary>
-        /// <param name="enumValue">枚举值</param>
-        /// <returns>本地化后的显示名称</returns>
+        /// <param name="enumValue">Enum value</param>
+        /// <returns>Localized display name</returns>
         public string GetEnumDisplayName(Enum enumValue)
         {
             if (enumValue == null)
@@ -189,20 +189,20 @@ namespace QuickLaunchTool.Utils
         }
 
         /// <summary>
-        /// 获取语言的显示名称
+        /// Get language display name
         /// </summary>
-        /// <param name="languageCode">语言代码</param>
-        /// <returns>语言的本地化显示名称</returns>
+        /// <param name="languageCode">Language code</param>
+        /// <returns>Localized display name of the language</returns>
         public string GetLanguageDisplayName(string languageCode)
         {
             return GetString($"Lang_{languageCode}");
         }
 
         /// <summary>
-        /// 获取语言的原生名称（固定不变，不受当前语言影响）
+        /// Get native name of language (fixed, not affected by current language)
         /// </summary>
-        /// <param name="languageCode">语言代码</param>
-        /// <returns>语言的原生显示名称</returns>
+        /// <param name="languageCode">Language code</param>
+        /// <returns>Native display name of the language</returns>
         public string GetLanguageNativeName(string languageCode)
         {
             return languageCode switch
@@ -219,10 +219,10 @@ namespace QuickLaunchTool.Utils
         }
 
         /// <summary>
-        /// 获取枚举的固定英文显示名称（不受当前语言影响）
+        /// Get fixed English display name of enum (not affected by current language)
         /// </summary>
-        /// <param name="enumValue">枚举值</param>
-        /// <returns>固定的英文显示名称</returns>
+        /// <param name="enumValue">Enum value</param>
+        /// <returns>Fixed English display name</returns>
         public string GetEnumFixedName(Enum enumValue)
         {
             if (enumValue == null)
@@ -231,7 +231,7 @@ namespace QuickLaunchTool.Utils
             var enumType = enumValue.GetType();
             var enumName = enumValue.ToString();
 
-            // 根据枚举类型和值返回固定的英文显示名称
+            // Return fixed English display names based on enum type and value
             if (enumType.Name == "SortMode")
             {
                 return enumName switch

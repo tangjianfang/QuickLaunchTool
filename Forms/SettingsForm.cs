@@ -12,7 +12,7 @@ using QuickLaunchTool.Utils;
 namespace QuickLaunchTool.Forms
 {
     /// <summary>
-    /// 设置窗体
+    /// Settings Form
     /// </summary>
     public partial class SettingsForm : Form
     {
@@ -26,7 +26,7 @@ namespace QuickLaunchTool.Forms
         private CheckBox? _topMostCheckBox;
         private NumericUpDown? _opacityNumeric;
 
-        // 标签引用（用于更新本地化）
+        // Label references (for updating localization)
         private Label? _languageLabel;
         private Label? _sortLabel;
         private Label? _themeLabel;
@@ -35,56 +35,56 @@ namespace QuickLaunchTool.Forms
         private Button? _okBtn;
         private Button? _cancelBtn;
 
-        // 防止递归更新的标志
+        // Prevent recursive update flag
         private bool _isUpdating = false;
 
         public SettingsForm()
         {
-            System.Diagnostics.Debug.WriteLine("========== SettingsForm 构造函数开始 ==========");
+            System.Diagnostics.Debug.WriteLine("========== SettingsForm Constructor Start ==========");
 
             InitializeComponent();
             _config = _configManager.GetConfig();
 
-            System.Diagnostics.Debug.WriteLine($"[SettingsForm] 从配置管理器获取的语言: {_config.Language}");
-            System.Diagnostics.Debug.WriteLine($"[SettingsForm] LocalizationManager 当前语言: {_localization.CurrentLanguage}");
+            System.Diagnostics.Debug.WriteLine($"[SettingsForm] Language from config manager: {_config.Language}");
+            System.Diagnostics.Debug.WriteLine($"[SettingsForm] LocalizationManager current language: {_localization.CurrentLanguage}");
 
-            // 设置标志，防止初始化时触发事件
+            // Set flag to prevent event triggering during initialization
             _isUpdating = true;
 
             SetupUI();
 
-            // 初始化完成，恢复标志
+            // Initialization complete, restore flag
             _isUpdating = false;
 
-            // 订阅语言变更事件
+            // Subscribe to language change event
             _localization.LanguageChanged += (s, e) =>
             {
-                System.Diagnostics.Debug.WriteLine($"[SettingsForm] 收到 LanguageChanged 事件");
+                System.Diagnostics.Debug.WriteLine($"[SettingsForm] Received LanguageChanged event");
                 UpdateLocalization();
             };
 
-            // 订阅 Load 事件，在窗体加载后设置语言选中项
+            // Subscribe to Load event to set all dropdown selections after form is loaded
             this.Load += SettingsForm_Load;
 
-            System.Diagnostics.Debug.WriteLine("========== SettingsForm 构造函数结束 ==========");
+            System.Diagnostics.Debug.WriteLine("========== SettingsForm Constructor End ==========");
         }
 
         /// <summary>
-        /// 窗体加载事件 - 在此设置所有下拉框的选中项
+        /// Form Load event - Set all dropdown selections after form is loaded
         /// </summary>
         private void SettingsForm_Load(object? sender, EventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine("[SettingsForm_Load] 窗体加载完成");
+            System.Diagnostics.Debug.WriteLine("[SettingsForm_Load] Form loaded");
 
-            // 设置更新标志，避免触发 SelectedIndexChanged 事件
+            // Set update flag to avoid triggering SelectedIndexChanged event
             _isUpdating = true;
             try
             {
-                // 设置语言选中项
+                // Set language selection
                 if (_languageCombo != null && _languageCombo.Items.Count > 0)
                 {
                     var currentLang = _config.Language;
-                    System.Diagnostics.Debug.WriteLine($"[SettingsForm_Load] 设置语言: {currentLang}");
+                    System.Diagnostics.Debug.WriteLine($"[SettingsForm_Load] Setting language: {currentLang}");
 
                     _languageCombo.SelectedValue = currentLang;
                     if (_languageCombo.SelectedIndex == -1)
@@ -93,10 +93,10 @@ namespace QuickLaunchTool.Forms
                     }
                 }
 
-                // 设置排序方式选中项
+                // Set sort mode selection
                 if (_sortModeCombo != null && _sortModeCombo.Items.Count > 0)
                 {
-                    System.Diagnostics.Debug.WriteLine($"[SettingsForm_Load] 设置排序方式: {_config.SortMode}");
+                    System.Diagnostics.Debug.WriteLine($"[SettingsForm_Load] Setting sort mode: {_config.SortMode}");
                     foreach (EnumItem<SortMode> item in _sortModeCombo.Items)
                     {
                         if (item.Value == _config.SortMode)
@@ -107,10 +107,10 @@ namespace QuickLaunchTool.Forms
                     }
                 }
 
-                // 设置主题选中项
+                // Set theme selection
                 if (_themeCombo != null && _themeCombo.Items.Count > 0)
                 {
-                    System.Diagnostics.Debug.WriteLine($"[SettingsForm_Load] 设置主题: {_config.Theme}");
+                    System.Diagnostics.Debug.WriteLine($"[SettingsForm_Load] Setting theme: {_config.Theme}");
                     foreach (EnumItem<ThemeMode> item in _themeCombo.Items)
                     {
                         if (item.Value == _config.Theme)
@@ -121,10 +121,10 @@ namespace QuickLaunchTool.Forms
                     }
                 }
 
-                // 设置图标大小选中项
+                // Set icon size selection
                 if (_iconSizeCombo != null && _iconSizeCombo.Items.Count > 0)
                 {
-                    System.Diagnostics.Debug.WriteLine($"[SettingsForm_Load] 设置图标大小: {_config.IconSize}");
+                    System.Diagnostics.Debug.WriteLine($"[SettingsForm_Load] Setting icon size: {_config.IconSize}");
                     foreach (EnumItem<IconSize> item in _iconSizeCombo.Items)
                     {
                         if (item.Value == _config.IconSize)
@@ -135,7 +135,7 @@ namespace QuickLaunchTool.Forms
                     }
                 }
 
-                System.Diagnostics.Debug.WriteLine("[SettingsForm_Load] 所有下拉框设置完成");
+                System.Diagnostics.Debug.WriteLine("[SettingsForm_Load] All dropdowns set up");
             }
             finally
             {
@@ -144,11 +144,11 @@ namespace QuickLaunchTool.Forms
         }
 
         /// <summary>
-        /// 初始化UI
+        /// Initialize UI
         /// </summary>
         private void SetupUI()
         {
-            System.Diagnostics.Debug.WriteLine("[SetupUI] 开始初始化UI");
+            System.Diagnostics.Debug.WriteLine("[SetupUI] Starting UI initialization");
 
             this.Text = _localization.GetString("SettingsForm_Title");
             this.Size = new Size(400, 350);
@@ -166,11 +166,11 @@ namespace QuickLaunchTool.Forms
                 Padding = new Padding(20)
             };
 
-            // 设置列宽
+            // Set column widths
             tableLayout.ColumnStyles.Add(new ColumnStyle(SizeType.AutoSize));
             tableLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100F));
 
-            // ========== 语言选择 ==========
+            // ========== Language Selection ==========
             _languageLabel = new Label
             {
                 Text = _localization.GetString("SettingsForm_Language"),
@@ -189,9 +189,9 @@ namespace QuickLaunchTool.Forms
             _languageCombo.DisplayMember = "DisplayName";
             _languageCombo.ValueMember = "Code";
 
-            // 填充语言列表（使用固定的原生名称）
+            // Populate language list (using fixed native names)
             var languageList = new List<LanguageItem>();
-            System.Diagnostics.Debug.WriteLine("[SetupUI] 开始填充语言列表");
+            System.Diagnostics.Debug.WriteLine("[SetupUI] Starting to populate language list");
             foreach (var lang in _localization.GetSupportedLanguages())
             {
                 var nativeName = _localization.GetLanguageNativeName(lang);
@@ -200,16 +200,16 @@ namespace QuickLaunchTool.Forms
                     Code = lang,
                     DisplayName = nativeName
                 });
-                System.Diagnostics.Debug.WriteLine($"[SetupUI] 添加语言: Code={lang}, DisplayName={nativeName}");
+                System.Diagnostics.Debug.WriteLine($"[SetupUI] Added language: Code={lang}, DisplayName={nativeName}");
             }
             _languageCombo.DataSource = languageList;
 
-            // 注意：选中项的设置移到了 UI 构建完成后（见底部）
+            // Note: Selection of the selected item is moved after UI construction is complete (see bottom)
             _languageCombo.SelectedIndexChanged += LanguageCombo_SelectedIndexChanged;
             tableLayout.Controls.Add(_languageCombo, 1, 0);
 
-            // ... 其他控件保持不变 ...
-            // ========== 排序方式 ==========
+            // ... Other controls remain unchanged ...
+            // ========== Sort Mode ==========
             _sortLabel = new Label
             {
                 Text = _localization.GetString("SettingsForm_SortMode"),
@@ -240,7 +240,7 @@ namespace QuickLaunchTool.Forms
             _sortModeCombo.DataSource = sortModes;
             tableLayout.Controls.Add(_sortModeCombo, 1, 1);
 
-            // ========== 主题 ==========
+            // ========== Theme ==========
             _themeLabel = new Label
             {
                 Text = _localization.GetString("SettingsForm_Theme"),
@@ -271,7 +271,7 @@ namespace QuickLaunchTool.Forms
             _themeCombo.DataSource = themes;
             tableLayout.Controls.Add(_themeCombo, 1, 2);
 
-            // ========== 图标大小 ==========
+            // ========== Icon Size ==========
             _iconSizeLabel = new Label
             {
                 Text = _localization.GetString("SettingsForm_IconSize"),
@@ -302,7 +302,7 @@ namespace QuickLaunchTool.Forms
             _iconSizeCombo.DataSource = iconSizes;
             tableLayout.Controls.Add(_iconSizeCombo, 1, 3);
 
-            // ========== 置顶 ==========
+            // ========== Always on Top ==========
             _topMostCheckBox = new CheckBox
             {
                 Text = _localization.GetString("SettingsForm_TopMost"),
@@ -312,7 +312,7 @@ namespace QuickLaunchTool.Forms
             };
             tableLayout.Controls.Add(_topMostCheckBox, 1, 4);
 
-            // ========== 不透明度 ==========
+            // ========== Opacity ==========
             _opacityLabel = new Label
             {
                 Text = _localization.GetString("SettingsForm_Opacity"),
@@ -333,7 +333,7 @@ namespace QuickLaunchTool.Forms
             };
             tableLayout.Controls.Add(_opacityNumeric, 1, 5);
 
-            // ========== 按钮面板 ==========
+            // ========== Button Panel ==========
             var buttonPanel = new FlowLayoutPanel
             {
                 FlowDirection = FlowDirection.RightToLeft,
@@ -368,15 +368,15 @@ namespace QuickLaunchTool.Forms
             this.AcceptButton = _okBtn;
             this.CancelButton = _cancelBtn;
 
-            System.Diagnostics.Debug.WriteLine("[SetupUI] UI初始化完成");
+            System.Diagnostics.Debug.WriteLine("[SetupUI] UI initialization complete");
         }
 
         /// <summary>
-        /// 保存配置
+        /// Save configuration
         /// </summary>
         private void SaveConfig()
         {
-            System.Diagnostics.Debug.WriteLine("========== SaveConfig 开始 ==========");
+            System.Diagnostics.Debug.WriteLine("========== SaveConfig Start ==========");
 
             // 保存语言选择
             if (_languageCombo != null && _languageCombo.SelectedItem is LanguageItem langItem)
@@ -400,57 +400,57 @@ namespace QuickLaunchTool.Forms
             if (_opacityNumeric != null)
                 _config.Opacity = (double)_opacityNumeric.Value / 100.0;
 
-            System.Diagnostics.Debug.WriteLine($"[SaveConfig] 调用 UpdateConfig，语言={_config.Language}");
+            System.Diagnostics.Debug.WriteLine($"[SaveConfig] Calling UpdateConfig, language={_config.Language}");
             _configManager.UpdateConfig(_config);
 
-            System.Diagnostics.Debug.WriteLine($"[SaveConfig] UpdateConfig 完成后，LocalizationManager.CurrentLanguage={_localization.CurrentLanguage}");
+            System.Diagnostics.Debug.WriteLine($"[SaveConfig] After UpdateConfig, LocalizationManager.CurrentLanguage={_localization.CurrentLanguage}");
 
             this.DialogResult = DialogResult.OK;
 
-            System.Diagnostics.Debug.WriteLine("========== SaveConfig 结束 ==========");
+            System.Diagnostics.Debug.WriteLine("========== SaveConfig End ==========");
         }
 
         /// <summary>
-        /// 语言选择变更事件
+        /// Language selection change event
         /// </summary>
         private void LanguageCombo_SelectedIndexChanged(object? sender, EventArgs e)
         {
-            System.Diagnostics.Debug.WriteLine($"[LanguageCombo_SelectedIndexChanged] 触发，_isUpdating={_isUpdating}");
+            System.Diagnostics.Debug.WriteLine($"[LanguageCombo_SelectedIndexChanged] Triggered, _isUpdating={_isUpdating}");
 
-            // 如果正在批量更新UI，忽略此事件
+            // If batch updating UI, ignore this event
             if (_isUpdating)
             {
-                System.Diagnostics.Debug.WriteLine("[LanguageCombo_SelectedIndexChanged] 忽略（_isUpdating=true）");
+                System.Diagnostics.Debug.WriteLine("[LanguageCombo_SelectedIndexChanged] Ignored (_isUpdating=true)");
                 return;
             }
 
             if (_languageCombo?.SelectedItem is LanguageItem langItem)
             {
-                System.Diagnostics.Debug.WriteLine($"[LanguageCombo_SelectedIndexChanged] 选中语言: {langItem.Code} ({langItem.DisplayName})");
-                System.Diagnostics.Debug.WriteLine($"[LanguageCombo_SelectedIndexChanged] 调用 SetLanguage");
+                System.Diagnostics.Debug.WriteLine($"[LanguageCombo_SelectedIndexChanged] Selected language: {langItem.Code} ({langItem.DisplayName})");
+                System.Diagnostics.Debug.WriteLine($"[LanguageCombo_SelectedIndexChanged] Calling SetLanguage");
 
-                // 切换语言，这会触发 LanguageChanged 事件，进而调用 UpdateLocalization()
+                // Switch language, this will trigger LanguageChanged event, which calls UpdateLocalization()
                 _localization.SetLanguage(langItem.Code);
 
-                System.Diagnostics.Debug.WriteLine($"[LanguageCombo_SelectedIndexChanged] SetLanguage 完成");
+                System.Diagnostics.Debug.WriteLine($"[LanguageCombo_SelectedIndexChanged] SetLanguage complete");
             }
         }
 
         /// <summary>
-        /// 更新界面本地化文本
+        /// Update UI localization text
         /// </summary>
         private void UpdateLocalization()
         {
-            System.Diagnostics.Debug.WriteLine("[UpdateLocalization] 开始更新本地化");
+            System.Diagnostics.Debug.WriteLine("[UpdateLocalization] Starting localization update");
 
-            // 设置更新标志，防止触发下拉框的SelectedIndexChanged事件导致递归
+            // Set update flag to prevent recursion from dropdown SelectedIndexChanged event
             _isUpdating = true;
             try
             {
-                // 更新窗口标题
+                // Update window title
                 this.Text = _localization.GetString("SettingsForm_Title");
 
-                // 更新标签
+                // Update labels
                 if (_languageLabel != null)
                     _languageLabel.Text = _localization.GetString("SettingsForm_Language");
                 if (_sortLabel != null)
@@ -464,26 +464,26 @@ namespace QuickLaunchTool.Forms
                 if (_opacityLabel != null)
                     _opacityLabel.Text = _localization.GetString("SettingsForm_Opacity");
 
-                // 更新按钮
+                // Update buttons
                 if (_okBtn != null)
                     _okBtn.Text = _localization.GetString("SettingsForm_ButtonOK");
                 if (_cancelBtn != null)
                     _cancelBtn.Text = _localization.GetString("SettingsForm_ButtonCancel");
 
-                // 注意：所有下拉框（语言、排序方式、主题、图标大小）都使用固定的显示名称，
-                // 不需要在语言切换时更新
+                // Note: All dropdowns (language, sort mode, theme, icon size) use fixed display names,
+                // no need to update when language changes
 
-                System.Diagnostics.Debug.WriteLine("[UpdateLocalization] 更新本地化完成");
+                System.Diagnostics.Debug.WriteLine("[UpdateLocalization] Localization update complete");
             }
             finally
             {
-                // 恢复标志
+                // Restore flag
                 _isUpdating = false;
             }
         }
 
         /// <summary>
-        /// 初始化组件（由设计器生成）
+        /// Initialize component (generated by designer)
         /// </summary>
         private void InitializeComponent()
         {
@@ -493,7 +493,7 @@ namespace QuickLaunchTool.Forms
     }
 
     /// <summary>
-    /// 语言项辅助类
+    /// Language item helper class
     /// </summary>
     public class LanguageItem
     {
@@ -502,7 +502,7 @@ namespace QuickLaunchTool.Forms
     }
 
     /// <summary>
-    /// 枚举项辅助类
+    /// Enum item helper class
     /// </summary>
     public class EnumItem<T> where T : Enum
     {

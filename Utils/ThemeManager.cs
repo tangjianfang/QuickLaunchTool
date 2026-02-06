@@ -6,30 +6,30 @@ using System.Windows.Forms;
 namespace QuickLaunchTool.Utils
 {
     /// <summary>
-    /// 主题管理器
+    /// Theme manager
     /// </summary>
     public static class ThemeManager
     {
-        // 浅色主题颜色
+        // Light theme colors
         private static readonly Color LightBackground = Color.White;
         private static readonly Color LightForeground = Color.Black;
         private static readonly Color LightHover = Color.LightGray;
         private static readonly Color LightBorder = Color.DarkGray;
 
-        // 深色主题颜色
+        // Dark theme colors
         private static readonly Color DarkBackground = Color.FromArgb(45, 45, 48);
         private static readonly Color DarkForeground = Color.White;
         private static readonly Color DarkHover = Color.FromArgb(60, 60, 65);
         private static readonly Color DarkBorder = Color.FromArgb(100, 100, 100);
 
-        // Windows API 用于设置深色标题栏
+        // Windows API for setting dark title bar
         [DllImport("dwmapi.dll", PreserveSig = true)]
         private static extern int DwmSetWindowAttribute(IntPtr hwnd, int attr, ref int attrValue, int attrSize);
 
         private const int DWMWA_USE_IMMERSIVE_DARK_MODE = 20;
 
         /// <summary>
-        /// 获取背景色
+        /// Get background color
         /// </summary>
         public static Color GetBackgroundColor(bool darkTheme)
         {
@@ -37,7 +37,7 @@ namespace QuickLaunchTool.Utils
         }
 
         /// <summary>
-        /// 获取前景色
+        /// Get foreground color
         /// </summary>
         public static Color GetForegroundColor(bool darkTheme)
         {
@@ -45,7 +45,7 @@ namespace QuickLaunchTool.Utils
         }
 
         /// <summary>
-        /// 获取悬停色
+        /// Get hover color
         /// </summary>
         public static Color GetHoverColor(bool darkTheme)
         {
@@ -53,7 +53,7 @@ namespace QuickLaunchTool.Utils
         }
 
         /// <summary>
-        /// 获取边框色
+        /// Get border color
         /// </summary>
         public static Color GetBorderColor(bool darkTheme)
         {
@@ -61,7 +61,7 @@ namespace QuickLaunchTool.Utils
         }
 
         /// <summary>
-        /// 应用主题到窗体（包括标题栏）
+        /// Apply theme to form (including title bar)
         /// </summary>
         public static void ApplyTheme(Form form, bool darkTheme)
         {
@@ -76,15 +76,15 @@ namespace QuickLaunchTool.Utils
             }
             catch
             {
-                // 忽略错误（旧版 Windows 不支持）
+                // Ignore errors (old Windows versions don't support)
             }
 
-            // 应用主题到控件
+            // Apply theme to control
             ApplyThemeToControl(form, darkTheme);
         }
 
         /// <summary>
-        /// 应用主题到控件
+        /// Apply theme to control
         /// </summary>
         public static void ApplyTheme(Control control, bool darkTheme)
         {
@@ -99,18 +99,18 @@ namespace QuickLaunchTool.Utils
         }
 
         /// <summary>
-        /// 递归应用主题到控件及其子控件
+        /// Recursively apply theme to control and its child controls
         /// </summary>
         private static void ApplyThemeToControl(Control control, bool darkTheme)
         {
             var bgColor = GetBackgroundColor(darkTheme);
             var fgColor = GetForegroundColor(darkTheme);
 
-            // 设置控件颜色
+            // Set control color
             control.BackColor = bgColor;
             control.ForeColor = fgColor;
 
-            // 特殊处理 ToolStrip
+            // Special handling for ToolStrip
             if (control is ToolStrip toolStrip)
             {
                 toolStrip.BackColor = bgColor;
@@ -122,7 +122,7 @@ namespace QuickLaunchTool.Utils
                     item.BackColor = bgColor;
                     item.ForeColor = fgColor;
 
-                    // 处理 ToolStripControlHost 中的控件
+                    // Handle ToolStripControlHost control
                     if (item is ToolStripControlHost host && host.Control != null)
                     {
                         host.Control.BackColor = darkTheme ? DarkBackground : Color.White;
@@ -131,7 +131,7 @@ namespace QuickLaunchTool.Utils
                 }
             }
 
-            // 递归处理子控件
+            // Recursively handle child controls
             foreach (Control child in control.Controls)
             {
                 ApplyThemeToControl(child, darkTheme);
@@ -140,7 +140,7 @@ namespace QuickLaunchTool.Utils
     }
 
     /// <summary>
-    /// 自定义 ToolStrip 颜色表
+    /// Custom ToolStrip color table
     /// </summary>
     internal class ThemeColorTable : ProfessionalColorTable
     {

@@ -8,7 +8,7 @@ using QuickLaunchTool.Models;
 namespace QuickLaunchTool.Services
 {
     /// <summary>
-    /// 文件扫描进度事件参数
+    /// File scan progress event arguments
     /// </summary>
     public class ScanProgressEventArgs : EventArgs
     {
@@ -18,11 +18,11 @@ namespace QuickLaunchTool.Services
     }
 
     /// <summary>
-    /// 文件扫描服务
+    /// File scanning service
     /// </summary>
     public class FileScanner
     {
-        // 系统文件夹，不进行扫描
+        // System folders that are not scanned
         private static readonly HashSet<string> SystemFolders = new(StringComparer.OrdinalIgnoreCase)
         {
             "Windows",
@@ -39,16 +39,16 @@ namespace QuickLaunchTool.Services
             "System Volume Information"
         };
 
-        // 最大递归深度限制
+        // Maximum recursion depth limit
         private const int MaxRecursionDepth = 10;
 
         /// <summary>
-        /// 扫描进度事件
+        /// Scan progress event
         /// </summary>
         public event EventHandler<ScanProgressEventArgs>? ScanProgress;
 
         /// <summary>
-        /// 扫描单个文件夹
+        /// Scan a single folder
         /// </summary>
         public async Task<List<AppInfo>> ScanFolderAsync(string path, bool includeSubfolders = true)
         {
@@ -76,7 +76,7 @@ namespace QuickLaunchTool.Services
         }
 
         /// <summary>
-        /// 扫描多个文件夹
+        /// Scan multiple folders
         /// </summary>
         public async Task<List<AppInfo>> ScanMultipleFoldersAsync(List<string> paths, bool includeSubfolders = true)
         {
@@ -90,10 +90,10 @@ namespace QuickLaunchTool.Services
                     if (string.IsNullOrWhiteSpace(path))
                         continue;
 
-                    // 检查是否是直接的exe文件路径
+                    // Check if it's a direct exe file path
                     if (File.Exists(path) && path.EndsWith(".exe", StringComparison.OrdinalIgnoreCase))
                     {
-                        // 直接添加exe文件
+                        // Directly add exe file
                         if (!addedPaths.Contains(path))
                         {
                             var fileInfo = new FileInfo(path);
@@ -108,7 +108,7 @@ namespace QuickLaunchTool.Services
                             addedPaths.Add(path);
                         }
                     }
-                    // 检查是否是文件夾
+                    // Check if it's a folder
                     else if (Directory.Exists(path))
                     {
                         var apps = await ScanFolderAsync(path, includeSubfolders);
@@ -124,11 +124,11 @@ namespace QuickLaunchTool.Services
                 }
                 catch (Exception ex)
                 {
-                    System.Diagnostics.Debug.WriteLine($"扫描路径异常 {path}: {ex.Message}");
+                    System.Diagnostics.Debug.WriteLine($"Scan path exception {path}: {ex.Message}");
                 }
             }
 
-            // 去重：保留第一个具有相同FullPath的项
+            // Deduplication: keep the first item with the same FullPath
             var uniqueApps = result
                 .GroupBy(a => a.FullPath, StringComparer.OrdinalIgnoreCase)
                 .Select(g => g.First())
@@ -138,15 +138,15 @@ namespace QuickLaunchTool.Services
         }
 
         /// <summary>
-        /// 递归扫描文件夹
+        /// Recursively scan folders
         /// </summary>
         private async Task ScanFolderRecursiveAsync(string path, List<AppInfo> result, bool includeSubfolders,
             HashSet<string> visitedPaths, int depth)
         {
-            // 限制递归深度
+            // Limit recursion depth
             if (depth > MaxRecursionDepth)
             {
-                System.Diagnostics.Debug.WriteLine($"达到最大递归深度限制: {path}");
+                System.Diagnostics.Debug.WriteLine($"Reached maximum recursion depth limit: {path}");
                 return;
             }
 
@@ -154,19 +154,19 @@ namespace QuickLaunchTool.Services
             {
                 var fullPath = Path.GetFullPath(path);
 
-                // 检查是否已访问过此路径（防止循环）
+                // Check if this path has been visited (prevent loops)
                 if (visitedPaths.Contains(fullPath))
                 {
-                    System.Diagnostics.Debug.WriteLine($"跳过已访问的路径: {fullPath}");
+                    System.Diagnostics.Debug.WriteLine($"Skip visited path: {fullPath}");
                     return;
                 }
 
-                // 标记为已访问
+                // Mark as visited
                 visitedPaths.Add(fullPath);
 
                 var directory = new DirectoryInfo(fullPath);
 
-                // 获取当前目录的exe文件
+                // Get exe files in the current directory
                 var exeFiles = directory.GetFiles("*.exe", SearchOption.TopDirectoryOnly)
                     .Where(f => !IsSystemFile(f.FullName))
                     .ToList();
@@ -200,7 +200,7 @@ namespace QuickLaunchTool.Services
                     }
                     catch (UnauthorizedAccessException)
                     {
-                        // 无权限访问该文件夹的子目录
+                        // No permission to access subdirectories of this folder
                         return;
                     }
 
@@ -212,7 +212,7 @@ namespace QuickLaunchTool.Services
                         }
                         catch (UnauthorizedAccessException)
                         {
-                            // 无权限访问该文件夹，跳过
+                            // No permission to access this folder, skip
                         }
                         catch (StackOverflowException)
                         {
@@ -221,23 +221,23 @@ namespace QuickLaunchTool.Services
                         }
                         catch (Exception ex)
                         {
-                            System.Diagnostics.Debug.WriteLine($"递归扫描异常: {subDir.FullName}, {ex.Message}");
+                            System.Diagnostics.Debug.WriteLine($"Recursive scan exception: {subDir.FullName}, {ex.Message}");
                         }
                     }
                 }
             }
             catch (UnauthorizedAccessException)
             {
-                // 权限被拒绝
+                // Permission denied
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"文件夹扫描异常: {path}, {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Folder scan exception: {path}, {ex.Message}");
             }
         }
 
         /// <summary>
-        /// 检查是否为系统文件夹
+        /// Check if it's a system folder
         /// </summary>
         private static bool IsSystemFolder(string folderName)
         {
@@ -245,7 +245,7 @@ namespace QuickLaunchTool.Services
         }
 
         /// <summary>
-        /// 检查是否为系统文件
+        /// Check if it's a system file
         /// </summary>
         private static bool IsSystemFile(string filePath)
         {
@@ -261,7 +261,7 @@ namespace QuickLaunchTool.Services
         }
 
         /// <summary>
-        /// 触发扫描进度事件
+        /// Trigger scan progress event
         /// </summary>
         protected virtual void OnScanProgress(string currentPath, int totalFound)
         {
