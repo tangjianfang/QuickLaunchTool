@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <data name="Lang_zh-CN" xml:space="preserve"><value>簡体字中国語</value></data>
+  <data name="Lang_en-US" xml:space="preserve"><value>English</value></data>
+  <data name="Lang_ja-JP" xml:space="preserve"><value>日本語</value></data>
+  <data name="Lang_ko-KR" xml:space="preserve"><value>한국어</value></data>
+  <data name="Lang_fr-FR" xml:space="preserve"><value>Français</value></data>
+  <data name="Lang_de-DE" xml:space="preserve"><value>Deutsch</value></data>
+  <data name="Lang_es-ES" xml:space="preserve"><value>Español</value></data>
+
+  <data name="MainForm_Title" xml:space="preserve"><value>クイック起動ツール</value></data>
+  <data name="MainForm_Toolbar_Search" xml:space="preserve"><value>検索: </value></data>
+  <data name="MainForm_Toolbar_AddFile" xml:space="preserve"><value>ファイルを追加</value></data>
+  <data name="MainForm_Toolbar_AddFolder" xml:space="preserve"><value>フォルダを追加</value></data>
+  <data name="MainForm_Toolbar_ImportTaskbar" xml:space="preserve"><value>タスクバーをインポート</value></data>
+  <data name="MainForm_Toolbar_DeleteSelected" xml:space="preserve"><value>選択項目を削除</value></data>
+  <data name="MainForm_Toolbar_Settings" xml:space="preserve"><value>設定</value></data>
+  <data name="MainForm_WelcomeMessage" xml:space="preserve"><value>クイック起動ツールへようこそ！
+
+ツールバーの「ファイルを追加」または「フォルダを追加」ボタンをクリックしてアプリケーションを追加してください。</value></data>
+  <data name="MainForm_StatusCount" xml:space="preserve"><value>合計 {0} 個のアプリケーションが見つかりました</value></data>
+  <data name="MainForm_ScanningFolder" xml:space="preserve"><value>フォルダをスキャン中...</value></data>
+  <data name="MainForm_FileDialog_Title" xml:space="preserve"><value>追加するアプリケーションを選択</value></data>
+  <data name="MainForm_FileDialog_Filter" xml:space="preserve"><value>実行可能ファイル (*.exe)|*.exe|すべてのファイル (*.*)|*.*</value></data>
+  <data name="MainForm_FolderDialog_Title" xml:space="preserve"><value>スキャンするフォルダを選択</value></data>
+  <data name="MainForm_AddSuccess_Message" xml:space="preserve"><value>{0} 個のアプリケーションを正常に追加しました</value></data>
+  <data name="MainForm_AddSuccess_Title" xml:space="preserve"><value>完了</value></data>
+  <data name="MainForm_NoExeFound_Message" xml:space="preserve"><value>このフォルダに実行可能ファイルが見つかりませんでした</value></data>
+  <data name="MainForm_NoExeFound_Title" xml:space="preserve"><value>通知</value></data>
+  <data name="MainForm_ImportSuccess_Message" xml:space="preserve"><value>{0} 個のアプリケーションを正常にインポートしました</value></data>
+  <data name="MainForm_ImportSuccess_Title" xml:space="preserve"><value>インポート完了</value></data>
+  <data name="MainForm_NoNewApps_Message" xml:space="preserve"><value>新しいアプリケーションが見つかりませんでした（すべて追加済みの可能性があります）</value></data>
+  <data name="MainForm_NoNewApps_Title" xml:space="preserve"><value>通知</value></data>
+  <data name="MainForm_ImportError_Message" xml:space="preserve"><value>インポートに失敗しました: {0}</value></data>
+  <data name="MainForm_ImportError_Title" xml:space="preserve"><value>エラー</value></data>
+  <data name="MainForm_NoTaskbarDir_Message" xml:space="preserve"><value>タスクバーのショートカットディレクトリが見つかりません</value></data>
+  <data name="MainForm_NoTaskbarDir_Title" xml:space="preserve"><value>通知</value></data>
+  <data name="MainForm_DeletePrompt_Message" xml:space="preserve"><value>まず削除するアプリケーションを選択してください（Ctrlキーを押しながらクリックで複数選択）</value></data>
+  <data name="MainForm_DeletePrompt_Title" xml:space="preserve"><value>通知</value></data>
+  <data name="MainForm_DeleteConfirm_Message" xml:space="preserve"><value>選択した {0} 個のアプリケーションを削除してもよろしいですか？</value></data>
+  <data name="MainForm_DeleteConfirm_Title" xml:space="preserve"><value>削除の確認</value></data>
+
+  <data name="SettingsForm_Title" xml:space="preserve"><value>設定</value></data>
+  <data name="SettingsForm_Language" xml:space="preserve"><value>言語:</value></data>
+  <data name="SettingsForm_SortMode" xml:space="preserve"><value>並び替え:</value></data>
+  <data name="SettingsForm_Theme" xml:space="preserve"><value>テーマ:</value></data>
+  <data name="SettingsForm_IconSize" xml:space="preserve"><value>アイコンサイズ:</value></data>
+  <data name="SettingsForm_TopMost" xml:space="preserve"><value>常に手前に表示</value></data>
+  <data name="SettingsForm_Opacity" xml:space="preserve"><value>不透明度:</value></data>
+  <data name="SettingsForm_ButtonOK" xml:space="preserve"><value>OK</value></data>
+  <data name="SettingsForm_ButtonCancel" xml:space="preserve"><value>キャンセル</value></data>
+
+  <data name="AppButton_MenuLaunch" xml:space="preserve"><value>起動</value></data>
+  <data name="AppButton_MenuRunAsAdmin" xml:space="preserve"><value>管理者として実行</value></data>
+  <data name="AppButton_MenuOpenLocation" xml:space="preserve"><value>ファイルの場所を開く</value></data>
+  <data name="AppButton_MenuProperties" xml:space="preserve"><value>プロパティ</value></data>
+  <data name="AppButton_MenuRemove" xml:space="preserve"><value>リストから削除</value></data>
+  <data name="AppButton_FileNotExist_Message" xml:space="preserve"><value>アプリケーションが存在しません:
+{0}
+
+再スキャンするか、リストからこの項目を削除してください。</value></data>
+  <data name="AppButton_FileNotExist_Title" xml:space="preserve"><value>ファイルが見つかりません</value></data>
+  <data name="AppButton_RemoveConfirm_Message" xml:space="preserve"><value>リストから '{0}' を削除してもよろしいですか？</value></data>
+  <data name="AppButton_RemoveConfirm_Title" xml:space="preserve"><value>削除の確認</value></data>
+
+  <data name="Enum_SortMode_Name" xml:space="preserve"><value>名前順</value></data>
+  <data name="Enum_SortMode_Modified" xml:space="preserve"><value>更新日時順</value></data>
+  <data name="Enum_SortMode_UseCount" xml:space="preserve"><value>使用回数順</value></data>
+  <data name="Enum_ThemeMode_Light" xml:space="preserve"><value>ライト</value></data>
+  <data name="Enum_ThemeMode_Dark" xml:space="preserve"><value>ダーク</value></data>
+  <data name="Enum_IconSize_Large" xml:space="preserve"><value>大 (50×60)</value></data>
+  <data name="Enum_IconSize_Medium" xml:space="preserve"><value>中 (40×50)</value></data>
+  <data name="Enum_IconSize_Small" xml:space="preserve"><value>小 (30×40)</value></data>
+
+  <data name="Program_Exception_Message" xml:space="preserve"><value>プログラム例外: {0}
+
+{1}</value></data>
+  <data name="Program_Exception_Title" xml:space="preserve"><value>エラー</value></data>
+</root>

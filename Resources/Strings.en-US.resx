@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <!-- Language Names -->
+  <data name="Lang_zh-CN" xml:space="preserve">
+    <value>简体中文</value>
+  </data>
+  <data name="Lang_en-US" xml:space="preserve">
+    <value>English</value>
+  </data>
+  <data name="Lang_ja-JP" xml:space="preserve">
+    <value>日本語</value>
+  </data>
+  <data name="Lang_ko-KR" xml:space="preserve">
+    <value>한국어</value>
+  </data>
+  <data name="Lang_fr-FR" xml:space="preserve">
+    <value>Français</value>
+  </data>
+  <data name="Lang_de-DE" xml:space="preserve">
+    <value>Deutsch</value>
+  </data>
+  <data name="Lang_es-ES" xml:space="preserve">
+    <value>Español</value>
+  </data>
+
+  <!-- MainForm -->
+  <data name="MainForm_Title" xml:space="preserve">
+    <value>Quick Launch Tool</value>
+  </data>
+  <data name="MainForm_Toolbar_Search" xml:space="preserve">
+    <value>Search: </value>
+  </data>
+  <data name="MainForm_Toolbar_AddFile" xml:space="preserve">
+    <value>Add File</value>
+  </data>
+  <data name="MainForm_Toolbar_AddFolder" xml:space="preserve">
+    <value>Add Folder</value>
+  </data>
+  <data name="MainForm_Toolbar_ImportTaskbar" xml:space="preserve">
+    <value>Import Taskbar</value>
+  </data>
+  <data name="MainForm_Toolbar_DeleteSelected" xml:space="preserve">
+    <value>Delete Selected</value>
+  </data>
+  <data name="MainForm_Toolbar_Settings" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="MainForm_WelcomeMessage" xml:space="preserve">
+    <value>Welcome to Quick Launch Tool!
+
+Click the "Add File" or "Add Folder" button in the toolbar to add applications.</value>
+  </data>
+  <data name="MainForm_StatusCount" xml:space="preserve">
+    <value>Total {0} applications found</value>
+  </data>
+  <data name="MainForm_ScanningFolder" xml:space="preserve">
+    <value>Scanning folder...</value>
+  </data>
+  <data name="MainForm_FileDialog_Title" xml:space="preserve">
+    <value>Select Application to Add</value>
+  </data>
+  <data name="MainForm_FileDialog_Filter" xml:space="preserve">
+    <value>Executable Files (*.exe)|*.exe|All Files (*.*)|*.*</value>
+  </data>
+  <data name="MainForm_FolderDialog_Title" xml:space="preserve">
+    <value>Select Folder to Scan</value>
+  </data>
+  <data name="MainForm_AddSuccess_Message" xml:space="preserve">
+    <value>Successfully added {0} application(s)</value>
+  </data>
+  <data name="MainForm_AddSuccess_Title" xml:space="preserve">
+    <value>Complete</value>
+  </data>
+  <data name="MainForm_NoExeFound_Message" xml:space="preserve">
+    <value>No executable files found in this folder</value>
+  </data>
+  <data name="MainForm_NoExeFound_Title" xml:space="preserve">
+    <value>Notice</value>
+  </data>
+  <data name="MainForm_ImportSuccess_Message" xml:space="preserve">
+    <value>Successfully imported {0} application(s)</value>
+  </data>
+  <data name="MainForm_ImportSuccess_Title" xml:space="preserve">
+    <value>Import Complete</value>
+  </data>
+  <data name="MainForm_NoNewApps_Message" xml:space="preserve">
+    <value>No new applications found (may already be all added)</value>
+  </data>
+  <data name="MainForm_NoNewApps_Title" xml:space="preserve">
+    <value>Notice</value>
+  </data>
+  <data name="MainForm_ImportError_Message" xml:space="preserve">
+    <value>Import failed: {0}</value>
+  </data>
+  <data name="MainForm_ImportError_Title" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="MainForm_NoTaskbarDir_Message" xml:space="preserve">
+    <value>Taskbar shortcuts directory not found</value>
+  </data>
+  <data name="MainForm_NoTaskbarDir_Title" xml:space="preserve">
+    <value>Notice</value>
+  </data>
+  <data name="MainForm_DeletePrompt_Message" xml:space="preserve">
+    <value>Please select applications to delete first (hold Ctrl to multi-select)</value>
+  </data>
+  <data name="MainForm_DeletePrompt_Title" xml:space="preserve">
+    <value>Notice</value>
+  </data>
+  <data name="MainForm_DeleteConfirm_Message" xml:space="preserve">
+    <value>Are you sure you want to delete {0} selected application(s)?</value>
+  </data>
+  <data name="MainForm_DeleteConfirm_Title" xml:space="preserve">
+    <value>Confirm Delete</value>
+  </data>
+
+  <!-- SettingsForm -->
+  <data name="SettingsForm_Title" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="SettingsForm_Language" xml:space="preserve">
+    <value>Language:</value>
+  </data>
+  <data name="SettingsForm_SortMode" xml:space="preserve">
+    <value>Sort By:</value>
+  </data>
+  <data name="SettingsForm_Theme" xml:space="preserve">
+    <value>Theme:</value>
+  </data>
+  <data name="SettingsForm_IconSize" xml:space="preserve">
+    <value>Icon Size:</value>
+  </data>
+  <data name="SettingsForm_TopMost" xml:space="preserve">
+    <value>Always On Top</value>
+  </data>
+  <data name="SettingsForm_Opacity" xml:space="preserve">
+    <value>Opacity:</value>
+  </data>
+  <data name="SettingsForm_ButtonOK" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="SettingsForm_ButtonCancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+
+  <!-- AppButton Context Menu -->
+  <data name="AppButton_MenuLaunch" xml:space="preserve">
+    <value>Launch</value>
+  </data>
+  <data name="AppButton_MenuRunAsAdmin" xml:space="preserve">
+    <value>Run as Administrator</value>
+  </data>
+  <data name="AppButton_MenuOpenLocation" xml:space="preserve">
+    <value>Open File Location</value>
+  </data>
+  <data name="AppButton_MenuProperties" xml:space="preserve">
+    <value>Properties</value>
+  </data>
+  <data name="AppButton_MenuRemove" xml:space="preserve">
+    <value>Remove from List</value>
+  </data>
+  <data name="AppButton_FileNotExist_Message" xml:space="preserve">
+    <value>Application does not exist:
+{0}
+
+Please rescan or remove this item from the list.</value>
+  </data>
+  <data name="AppButton_FileNotExist_Title" xml:space="preserve">
+    <value>File Not Found</value>
+  </data>
+  <data name="AppButton_RemoveConfirm_Message" xml:space="preserve">
+    <value>Are you sure you want to remove '{0}' from the list?</value>
+  </data>
+  <data name="AppButton_RemoveConfirm_Title" xml:space="preserve">
+    <value>Confirm Remove</value>
+  </data>
+
+  <!-- Enums -->
+  <data name="Enum_SortMode_Name" xml:space="preserve">
+    <value>By Name</value>
+  </data>
+  <data name="Enum_SortMode_Modified" xml:space="preserve">
+    <value>By Modified Time</value>
+  </data>
+  <data name="Enum_SortMode_UseCount" xml:space="preserve">
+    <value>By Use Count</value>
+  </data>
+  <data name="Enum_ThemeMode_Light" xml:space="preserve">
+    <value>Light</value>
+  </data>
+  <data name="Enum_ThemeMode_Dark" xml:space="preserve">
+    <value>Dark</value>
+  </data>
+  <data name="Enum_IconSize_Large" xml:space="preserve">
+    <value>Large (50×60)</value>
+  </data>
+  <data name="Enum_IconSize_Medium" xml:space="preserve">
+    <value>Medium (40×50)</value>
+  </data>
+  <data name="Enum_IconSize_Small" xml:space="preserve">
+    <value>Small (30×40)</value>
+  </data>
+
+  <!-- Program -->
+  <data name="Program_Exception_Message" xml:space="preserve">
+    <value>Program Exception: {0}
+
+{1}</value>
+  </data>
+  <data name="Program_Exception_Title" xml:space="preserve">
+    <value>Error</value>
+  </data>
+</root>

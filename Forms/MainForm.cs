@@ -18,17 +18,46 @@ namespace QuickLaunchTool.Forms
     {
         private readonly FileScanner _fileScanner = new();
         private readonly ConfigManager _configManager = ConfigManager.Instance;
+        private readonly LocalizationManager _localization = LocalizationManager.Instance;
         private List<AppInfo> _appList = new();
         private FlowLayoutPanel? _flowLayoutPanel;
         private TextBox? _searchBox;
         private ToolStrip? _toolStrip;
         private HashSet<AppButton> _selectedButtons = new();
 
+        // 工具栏控件引用（用于更新本地化）
+        private ToolStripLabel? _searchLabel;
+        private ToolStripButton? _addFileBtn;
+        private ToolStripButton? _addFolderBtn;
+        private ToolStripButton? _importTaskbarBtn;
+        private ToolStripButton? _deleteSelectedBtn;
+        private ToolStripButton? _settingsBtn;
+
         public MainForm()
         {
             InitializeComponent();
+
+            // 先订阅语言变更事件
+            _localization.LanguageChanged += (s, e) => UpdateLocalization();
+
             SetupUI();
             LoadConfig();
+
+            // LoadConfig会加载配置文件中的语言设置，需要手动刷新UI
+            UpdateLocalization();
+
+            // 订阅 Load 事件，在窗体加载后应用主题（此时 Handle 已创建）
+            this.Load += MainForm_Load;
+        }
+
+        /// <summary>
+        /// 窗体加载事件 - 应用主题
+        /// </summary>
+        private void MainForm_Load(object? sender, EventArgs e)
+        {
+            var config = _configManager.GetConfig();
+            bool darkTheme = config.Theme == QuickLaunchTool.Models.ThemeMode.Dark;
+            ThemeManager.ApplyTheme(this, darkTheme);
         }
 
         /// <summary>
@@ -36,7 +65,7 @@ namespace QuickLaunchTool.Forms
         /// </summary>
         private void SetupUI()
         {
-            this.Text = "快速启动工具";
+            this.Text = _localization.GetString("MainForm_Title");
             this.Size = new Size(900, 600);
             this.StartPosition = FormStartPosition.CenterScreen;
             this.FormBorderStyle = FormBorderStyle.Sizable;
@@ -60,35 +89,35 @@ namespace QuickLaunchTool.Forms
             {
                 Dock = DockStyle.Top
             };
-            var searchLabel = new ToolStripLabel("搜索: ");
+            _searchLabel = new ToolStripLabel(_localization.GetString("MainForm_Toolbar_Search"));
             _searchBox = new TextBox { Width = 150, Height = 25 };
             _searchBox.TextChanged += SearchBox_TextChanged;
 
-            var addFileBtn = new ToolStripButton("添加文件");
-            addFileBtn.Click += AddFileBtn_Click;
+            _addFileBtn = new ToolStripButton(_localization.GetString("MainForm_Toolbar_AddFile"));
+            _addFileBtn.Click += AddFileBtn_Click;
 
-            var addFolderBtn = new ToolStripButton("添加文件夹");
-            addFolderBtn.Click += AddFolderBtn_Click;
+            _addFolderBtn = new ToolStripButton(_localization.GetString("MainForm_Toolbar_AddFolder"));
+            _addFolderBtn.Click += AddFolderBtn_Click;
 
-            var importTaskbarBtn = new ToolStripButton("导入任务栏");
-            importTaskbarBtn.Click += ImportTaskbarBtn_Click;
+            _importTaskbarBtn = new ToolStripButton(_localization.GetString("MainForm_Toolbar_ImportTaskbar"));
+            _importTaskbarBtn.Click += ImportTaskbarBtn_Click;
 
-            var deleteSelectedBtn = new ToolStripButton("删除选中");
-            deleteSelectedBtn.Click += DeleteSelectedBtn_Click;
+            _deleteSelectedBtn = new ToolStripButton(_localization.GetString("MainForm_Toolbar_DeleteSelected"));
+            _deleteSelectedBtn.Click += DeleteSelectedBtn_Click;
 
-            var settingsBtn = new ToolStripButton("设置");
-            settingsBtn.Click += SettingsBtn_Click;
+            _settingsBtn = new ToolStripButton(_localization.GetString("MainForm_Toolbar_Settings"));
+            _settingsBtn.Click += SettingsBtn_Click;
 
-            _toolStrip.Items.Add(searchLabel);
+            _toolStrip.Items.Add(_searchLabel);
             _toolStrip.Items.Add(new ToolStripControlHost(_searchBox) { AutoSize = false });
             _toolStrip.Items.Add(new ToolStripSeparator());
-            _toolStrip.Items.Add(addFileBtn);
-            _toolStrip.Items.Add(addFolderBtn);
-            _toolStrip.Items.Add(importTaskbarBtn);
+            _toolStrip.Items.Add(_addFileBtn);
+            _toolStrip.Items.Add(_addFolderBtn);
+            _toolStrip.Items.Add(_importTaskbarBtn);
             _toolStrip.Items.Add(new ToolStripSeparator());
-            _toolStrip.Items.Add(deleteSelectedBtn);
+            _toolStrip.Items.Add(_deleteSelectedBtn);
             _toolStrip.Items.Add(new ToolStripSeparator());
-            _toolStrip.Items.Add(settingsBtn);
+            _toolStrip.Items.Add(_settingsBtn);
 
             // 创建FlowLayoutPanel（内容区域）
             _flowLayoutPanel = new FlowLayoutPanel
@@ -212,7 +241,7 @@ namespace QuickLaunchTool.Forms
             _flowLayoutPanel.Controls.Clear();
             var welcomeLabel = new Label
             {
-                Text = "欢迎使用快速启动工具！\n\n点击工具栏的 \"添加文件\" 或 \"添加文件夹\" 按钮来添加应用程序。",
+                Text = _localization.GetString("MainForm_WelcomeMessage"),
                 AutoSize = true,
                 Location = new Point(20, 20),
                 Font = new Font("Microsoft YaHei", 10f)
@@ -232,8 +261,8 @@ namespace QuickLaunchTool.Forms
             {
                 using var dialog = new OpenFileDialog
                 {
-                    Title = "选择要添加的应用程序",
-                    Filter = "可执行文件 (*.exe)|*.exe|所有文件 (*.*)|*.*",
+                    Title = _localization.GetString("MainForm_FileDialog_Title"),
+                    Filter = _localization.GetString("MainForm_FileDialog_Filter"),
                     Multiselect = true
                 };
 
@@ -260,7 +289,7 @@ namespace QuickLaunchTool.Forms
             {
                 using var dialog = new FolderBrowserDialog
                 {
-                    Description = "选择要扫描的文件夹",
+                    Description = _localization.GetString("MainForm_FolderDialog_Title"),
                     ShowNewFolderButton = false
                 };
 
@@ -272,9 +301,9 @@ namespace QuickLaunchTool.Forms
                     if (_flowLayoutPanel != null)
                     {
                         var statusLabel = _flowLayoutPanel.Controls.OfType<Label>().FirstOrDefault();
-                        if (statusLabel != null && statusLabel.Text.StartsWith("共找到"))
+                        if (statusLabel != null && statusLabel.Text.Contains(_localization.GetString("MainForm_StatusCount", 0).Split(' ')[0]))
                         {
-                            statusLabel.Text = "正在扫描文件夹...";
+                            statusLabel.Text = _localization.GetString("MainForm_ScanningFolder");
                         }
                     }
 
@@ -284,11 +313,17 @@ namespace QuickLaunchTool.Forms
                     if (exeFiles.Count > 0)
                     {
                         AddApps(exeFiles);
-                        MessageBox.Show($"成功添加 {exeFiles.Count} 个应用程序", "完成", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        MessageBox.Show(
+                            _localization.GetString("MainForm_AddSuccess_Message", exeFiles.Count),
+                            _localization.GetString("MainForm_AddSuccess_Title"),
+                            MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                     else
                     {
-                        MessageBox.Show("该文件夹中没有找到可执行文件", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        MessageBox.Show(
+                            _localization.GetString("MainForm_NoExeFound_Message"),
+                            _localization.GetString("MainForm_NoExeFound_Title"),
+                            MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                 }
             }
@@ -386,7 +421,10 @@ namespace QuickLaunchTool.Forms
 
                 if (!Directory.Exists(taskbarPath))
                 {
-                    MessageBox.Show("未找到任务栏快捷方式目录", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show(
+                        _localization.GetString("MainForm_NoTaskbarDir_Message"),
+                        _localization.GetString("MainForm_NoTaskbarDir_Title"),
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
                     return;
                 }
 
@@ -424,16 +462,25 @@ namespace QuickLaunchTool.Forms
                 if (newApps.Count > 0)
                 {
                     AddApps(newApps);
-                    MessageBox.Show($"成功导入 {newApps.Count} 个应用程序", "导入完成", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show(
+                        _localization.GetString("MainForm_ImportSuccess_Message", newApps.Count),
+                        _localization.GetString("MainForm_ImportSuccess_Title"),
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
                 else
                 {
-                    MessageBox.Show("未找到新的应用程序（可能已全部添加）", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show(
+                        _localization.GetString("MainForm_NoNewApps_Message"),
+                        _localization.GetString("MainForm_NoNewApps_Title"),
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"导入失败: {ex.Message}", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(
+                    _localization.GetString("MainForm_ImportError_Message", ex.Message),
+                    _localization.GetString("MainForm_ImportError_Title"),
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -475,13 +522,16 @@ namespace QuickLaunchTool.Forms
         {
             if (_selectedButtons.Count == 0)
             {
-                MessageBox.Show("请先选择要删除的应用（按住Ctrl键点击可多选）", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show(
+                    _localization.GetString("MainForm_DeletePrompt_Message"),
+                    _localization.GetString("MainForm_DeletePrompt_Title"),
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 
             var result = MessageBox.Show(
-                $"确定要删除选中的 {_selectedButtons.Count} 个应用吗？",
-                "确认删除",
+                _localization.GetString("MainForm_DeleteConfirm_Message", _selectedButtons.Count),
+                _localization.GetString("MainForm_DeleteConfirm_Title"),
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Question
             );
@@ -534,7 +584,7 @@ namespace QuickLaunchTool.Forms
             // 添加状态标签（应用数量）
             var statusLabel = new Label
             {
-                Text = $"共找到 {apps.Count} 个应用程序",
+                Text = _localization.GetString("MainForm_StatusCount", apps.Count),
                 Width = _flowLayoutPanel.ClientSize.Width - 10,
                 Height = 16,
                 BackColor = Color.FromArgb(220, 220, 220),
@@ -628,10 +678,18 @@ namespace QuickLaunchTool.Forms
                 {
                     // 设置完成后，重新加载配置并应用
                     var config = _configManager.GetConfig();
+
+                    // 应用语言设置（这会触发界面更新）
+                    _localization.SetLanguage(config.Language);
+
+                    // 应用主题设置
+                    bool darkTheme = config.Theme == QuickLaunchTool.Models.ThemeMode.Dark;
+                    ThemeManager.ApplyTheme(this, darkTheme);
+
                     this.TopMost = config.TopMost;
                     this.Opacity = config.Opacity;
 
-                    // 重新排序和显示
+                    // 重新排序和显示（应用图标大小和排序方式的变化）
                     _appList = SortApps(_appList, config.SortMode);
                     DisplayApps(_appList);
                 }
@@ -653,6 +711,53 @@ namespace QuickLaunchTool.Forms
             config.WindowPosition = this.Location;
             config.WindowSize = this.Size;
             _configManager.UpdateConfig(config);
+        }
+
+        /// <summary>
+        /// 更新界面本地化文本
+        /// </summary>
+        private void UpdateLocalization()
+        {
+            // 更新窗口标题
+            this.Text = _localization.GetString("MainForm_Title");
+
+            // 更新工具栏按钮文本
+            if (_searchLabel != null)
+                _searchLabel.Text = _localization.GetString("MainForm_Toolbar_Search");
+            if (_addFileBtn != null)
+                _addFileBtn.Text = _localization.GetString("MainForm_Toolbar_AddFile");
+            if (_addFolderBtn != null)
+                _addFolderBtn.Text = _localization.GetString("MainForm_Toolbar_AddFolder");
+            if (_importTaskbarBtn != null)
+                _importTaskbarBtn.Text = _localization.GetString("MainForm_Toolbar_ImportTaskbar");
+            if (_deleteSelectedBtn != null)
+                _deleteSelectedBtn.Text = _localization.GetString("MainForm_Toolbar_DeleteSelected");
+            if (_settingsBtn != null)
+                _settingsBtn.Text = _localization.GetString("MainForm_Toolbar_Settings");
+
+            // 更新应用按钮的本地化文本
+            if (_flowLayoutPanel != null)
+            {
+                foreach (var control in _flowLayoutPanel.Controls)
+                {
+                    if (control is AppButton appButton)
+                    {
+                        appButton.UpdateLocalization();
+                    }
+                    else if (control is Label label && label.Text.Contains(_localization.GetString("MainForm_WelcomeMessage").Substring(0, 5)))
+                    {
+                        // 更新欢迎消息
+                        label.Text = _localization.GetString("MainForm_WelcomeMessage");
+                    }
+                }
+
+                // 更新状态标签文本
+                var statusLabel = _flowLayoutPanel.Controls.OfType<Label>().FirstOrDefault();
+                if (statusLabel != null && _appList.Count > 0)
+                {
+                    statusLabel.Text = _localization.GetString("MainForm_StatusCount", _appList.Count);
+                }
+            }
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)

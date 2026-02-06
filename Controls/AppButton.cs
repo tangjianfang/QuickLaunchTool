@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using QuickLaunchTool.Models;
 using QuickLaunchTool.Services;
+using QuickLaunchTool.Utils;
 
 namespace QuickLaunchTool.Controls
 {
@@ -11,10 +12,12 @@ namespace QuickLaunchTool.Controls
     /// </summary>
     public partial class AppButton : UserControl
     {
+        private readonly LocalizationManager _localization = LocalizationManager.Instance;
         private AppInfo? _appInfo;
         private bool _isHovered = false;
         private bool _isSelected = false;
         private IconSize _iconSize = IconSize.Large;
+        private ContextMenuStrip? _contextMenu;
 
         /// <summary>
         /// 获取或设置绑定的应用信息
@@ -70,7 +73,7 @@ namespace QuickLaunchTool.Controls
         private void InitializeComponent()
         {
             this.Size = new Size(50, 60);
-            this.BackColor = Color.White;
+            this.BackColor = Color.Transparent; // 使用透明背景，从父容器继承
             this.AutoScaleDimensions = new SizeF(6F, 13F);
             this.AutoScaleMode = AutoScaleMode.Font;
             this.Cursor = Cursors.Hand;
@@ -138,12 +141,19 @@ namespace QuickLaunchTool.Controls
             // 检查文件是否存在
             bool fileExists = System.IO.File.Exists(_appInfo.FullPath);
 
+            // 获取父容器背景色（用于主题支持）
+            Color parentBgColor = this.Parent?.BackColor ?? Color.White;
+            bool isDark = parentBgColor.GetBrightness() < 0.5f;
+
             // 绘制背景
-            Color bgColor = Color.White;
+            Color bgColor = parentBgColor;
             if (_isSelected)
                 bgColor = Color.FromArgb(180, 200, 255); // 选中状态是蓝色
             else if (_isHovered)
-                bgColor = Color.FromArgb(220, 230, 240);
+            {
+                // 悬停状态：根据父容器背景色判断是深色还是浅色主题
+                bgColor = isDark ? Color.FromArgb(60, 60, 65) : Color.FromArgb(220, 230, 240);
+            }
 
             using (var bgBrush = new SolidBrush(bgColor))
             {
@@ -275,7 +285,18 @@ namespace QuickLaunchTool.Controls
                 FormatFlags = StringFormatFlags.NoWrap
             };
 
-            using (var brush = new SolidBrush(fileExists ? Color.FromArgb(64, 64, 64) : Color.FromArgb(150, 255, 0, 0)))
+            // 根据主题选择文本颜色
+            Color textColor;
+            if (!fileExists)
+            {
+                textColor = Color.FromArgb(150, 255, 0, 0); // 文件不存在时用红色
+            }
+            else
+            {
+                textColor = isDark ? Color.FromArgb(220, 220, 220) : Color.FromArgb(64, 64, 64);
+            }
+
+            using (var brush = new SolidBrush(textColor))
             {
                 e.Graphics.DrawString(_appInfo.Name, font, brush, textRect, stringFormat);
             }
@@ -350,19 +371,20 @@ namespace QuickLaunchTool.Controls
             if (_appInfo == null)
                 return;
 
-            var menu = new ContextMenuStrip();
+            // 重建菜单以支持本地化
+            _contextMenu = new ContextMenuStrip();
 
-            menu.Items.Add("启动", null, (s, e) => ProcessLauncher.Launch(_appInfo.FullPath));
-            menu.Items.Add("以管理员身份运行", null, (s, e) => ProcessLauncher.LaunchAsAdmin(_appInfo.FullPath));
-            menu.Items.Add("-");
-            menu.Items.Add("打开文件位置", null, (s, e) => ProcessLauncher.OpenFileLocation(_appInfo.FullPath));
-            menu.Items.Add("属性", null, (s, e) => ProcessLauncher.ShowProperties(_appInfo.FullPath));
-            menu.Items.Add("-");
-            menu.Items.Add("从列表移除", null, (s, e) =>
+            _contextMenu.Items.Add(_localization.GetString("AppButton_MenuLaunch"), null, (s, e) => ProcessLauncher.Launch(_appInfo.FullPath));
+            _contextMenu.Items.Add(_localization.GetString("AppButton_MenuRunAsAdmin"), null, (s, e) => ProcessLauncher.LaunchAsAdmin(_appInfo.FullPath));
+            _contextMenu.Items.Add("-");
+            _contextMenu.Items.Add(_localization.GetString("AppButton_MenuOpenLocation"), null, (s, e) => ProcessLauncher.OpenFileLocation(_appInfo.FullPath));
+            _contextMenu.Items.Add(_localization.GetString("AppButton_MenuProperties"), null, (s, e) => ProcessLauncher.ShowProperties(_appInfo.FullPath));
+            _contextMenu.Items.Add("-");
+            _contextMenu.Items.Add(_localization.GetString("AppButton_MenuRemove"), null, (s, e) =>
             {
                 var result = MessageBox.Show(
-                    $"确定要从列表中移除 '{_appInfo.Name}' 吗？",
-                    "确认移除",
+                    _localization.GetString("AppButton_RemoveConfirm_Message", _appInfo.Name),
+                    _localization.GetString("AppButton_RemoveConfirm_Title"),
                     MessageBoxButtons.YesNo,
                     MessageBoxIcon.Question
                 );
@@ -372,7 +394,16 @@ namespace QuickLaunchTool.Controls
                 }
             });
 
-            menu.Show(this, location);
+            _contextMenu.Show(this, location);
+        }
+
+        /// <summary>
+        /// 更新本地化（用于语言热切换）
+        /// </summary>
+        public void UpdateLocalization()
+        {
+            // 右键菜单在显示时重建，无需额外处理
+            // 如果需要更新控件上的文本，在此处理
         }
     }
 }

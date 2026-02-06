@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using Newtonsoft.Json;
 using QuickLaunchTool.Models;
+using QuickLaunchTool.Utils;
 
 namespace QuickLaunchTool.Services
 {
@@ -57,6 +58,8 @@ namespace QuickLaunchTool.Services
                 if (!File.Exists(_configPath))
                 {
                     _config = AppConfig.GetDefault();
+                    // 初始化本地化管理器
+                    LocalizationManager.Instance.SetLanguage(_config.Language);
                     Save();
                     return true;
                 }
@@ -67,12 +70,16 @@ namespace QuickLaunchTool.Services
                 if (loaded != null && loaded.Validate())
                 {
                     _config = loaded;
+                    // 初始化本地化管理器
+                    LocalizationManager.Instance.SetLanguage(_config.Language);
                     return true;
                 }
                 else
                 {
                     // 配置无效，恢复默认
                     _config = AppConfig.GetDefault();
+                    // 初始化本地化管理器
+                    LocalizationManager.Instance.SetLanguage(_config.Language);
                     return false;
                 }
             }
@@ -80,6 +87,8 @@ namespace QuickLaunchTool.Services
             {
                 System.Diagnostics.Debug.WriteLine($"加载配置失败: {ex.Message}");
                 _config = AppConfig.GetDefault();
+                // 初始化本地化管理器
+                LocalizationManager.Instance.SetLanguage(_config.Language);
                 return false;
             }
         }
@@ -130,11 +139,12 @@ namespace QuickLaunchTool.Services
         /// </summary>
         public void UpdateConfig(AppConfig config)
         {
-            if (config.Validate())
-            {
-                _config = config;
-                Save();
-            }
+            if (config == null) throw new ArgumentNullException(nameof(config));
+
+            _config = config;
+
+            LocalizationManager.Instance.SetLanguage(_config.Language);
+            Save();
         }
 
         /// <summary>

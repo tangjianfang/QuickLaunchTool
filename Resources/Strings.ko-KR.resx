@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <data name="Lang_zh-CN" xml:space="preserve"><value>중국어 간체</value></data>
+  <data name="Lang_en-US" xml:space="preserve"><value>English</value></data>
+  <data name="Lang_ja-JP" xml:space="preserve"><value>日本語</value></data>
+  <data name="Lang_ko-KR" xml:space="preserve"><value>한국어</value></data>
+  <data name="Lang_fr-FR" xml:space="preserve"><value>Français</value></data>
+  <data name="Lang_de-DE" xml:space="preserve"><value>Deutsch</value></data>
+  <data name="Lang_es-ES" xml:space="preserve"><value>Español</value></data>
+
+  <data name="MainForm_Title" xml:space="preserve"><value>빠른 실행 도구</value></data>
+  <data name="MainForm_Toolbar_Search" xml:space="preserve"><value>검색: </value></data>
+  <data name="MainForm_Toolbar_AddFile" xml:space="preserve"><value>파일 추가</value></data>
+  <data name="MainForm_Toolbar_AddFolder" xml:space="preserve"><value>폴더 추가</value></data>
+  <data name="MainForm_Toolbar_ImportTaskbar" xml:space="preserve"><value>작업 표시줄 가져오기</value></data>
+  <data name="MainForm_Toolbar_DeleteSelected" xml:space="preserve"><value>선택 항목 삭제</value></data>
+  <data name="MainForm_Toolbar_Settings" xml:space="preserve"><value>설정</value></data>
+  <data name="MainForm_WelcomeMessage" xml:space="preserve"><value>빠른 실행 도구에 오신 것을 환영합니다!
+
+도구 모음의 "파일 추가" 또는 "폴더 추가" 버튼을 클릭하여 애플리케이션을 추가하세요.</value></data>
+  <data name="MainForm_StatusCount" xml:space="preserve"><value>총 {0}개의 애플리케이션을 찾았습니다</value></data>
+  <data name="MainForm_ScanningFolder" xml:space="preserve"><value>폴더 스캔 중...</value></data>
+  <data name="MainForm_FileDialog_Title" xml:space="preserve"><value>추가할 애플리케이션 선택</value></data>
+  <data name="MainForm_FileDialog_Filter" xml:space="preserve"><value>실행 파일 (*.exe)|*.exe|모든 파일 (*.*)|*.*</value></data>
+  <data name="MainForm_FolderDialog_Title" xml:space="preserve"><value>스캔할 폴더 선택</value></data>
+  <data name="MainForm_AddSuccess_Message" xml:space="preserve"><value>{0}개의 애플리케이션을 성공적으로 추가했습니다</value></data>
+  <data name="MainForm_AddSuccess_Title" xml:space="preserve"><value>완료</value></data>
+  <data name="MainForm_NoExeFound_Message" xml:space="preserve"><value>이 폴더에서 실행 파일을 찾을 수 없습니다</value></data>
+  <data name="MainForm_NoExeFound_Title" xml:space="preserve"><value>알림</value></data>
+  <data name="MainForm_ImportSuccess_Message" xml:space="preserve"><value>{0}개의 애플리케이션을 성공적으로 가져왔습니다</value></data>
+  <data name="MainForm_ImportSuccess_Title" xml:space="preserve"><value>가져오기 완료</value></data>
+  <data name="MainForm_NoNewApps_Message" xml:space="preserve"><value>새로운 애플리케이션을 찾을 수 없습니다 (이미 모두 추가되었을 수 있습니다)</value></data>
+  <data name="MainForm_NoNewApps_Title" xml:space="preserve"><value>알림</value></data>
+  <data name="MainForm_ImportError_Message" xml:space="preserve"><value>가져오기 실패: {0}</value></data>
+  <data name="MainForm_ImportError_Title" xml:space="preserve"><value>오류</value></data>
+  <data name="MainForm_NoTaskbarDir_Message" xml:space="preserve"><value>작업 표시줄 바로 가기 디렉터리를 찾을 수 없습니다</value></data>
+  <data name="MainForm_NoTaskbarDir_Title" xml:space="preserve"><value>알림</value></data>
+  <data name="MainForm_DeletePrompt_Message" xml:space="preserve"><value>먼저 삭제할 애플리케이션을 선택하세요 (Ctrl 키를 누른 채 클릭하면 다중 선택)</value></data>
+  <data name="MainForm_DeletePrompt_Title" xml:space="preserve"><value>알림</value></data>
+  <data name="MainForm_DeleteConfirm_Message" xml:space="preserve"><value>선택한 {0}개의 애플리케이션을 삭제하시겠습니까?</value></data>
+  <data name="MainForm_DeleteConfirm_Title" xml:space="preserve"><value>삭제 확인</value></data>
+
+  <data name="SettingsForm_Title" xml:space="preserve"><value>설정</value></data>
+  <data name="SettingsForm_Language" xml:space="preserve"><value>언어:</value></data>
+  <data name="SettingsForm_SortMode" xml:space="preserve"><value>정렬 기준:</value></data>
+  <data name="SettingsForm_Theme" xml:space="preserve"><value>테마:</value></data>
+  <data name="SettingsForm_IconSize" xml:space="preserve"><value>아이콘 크기:</value></data>
+  <data name="SettingsForm_TopMost" xml:space="preserve"><value>항상 위에 표시</value></data>
+  <data name="SettingsForm_Opacity" xml:space="preserve"><value>불투명도:</value></data>
+  <data name="SettingsForm_ButtonOK" xml:space="preserve"><value>확인</value></data>
+  <data name="SettingsForm_ButtonCancel" xml:space="preserve"><value>취소</value></data>
+
+  <data name="AppButton_MenuLaunch" xml:space="preserve"><value>실행</value></data>
+  <data name="AppButton_MenuRunAsAdmin" xml:space="preserve"><value>관리자 권한으로 실행</value></data>
+  <data name="AppButton_MenuOpenLocation" xml:space="preserve"><value>파일 위치 열기</value></data>
+  <data name="AppButton_MenuProperties" xml:space="preserve"><value>속성</value></data>
+  <data name="AppButton_MenuRemove" xml:space="preserve"><value>목록에서 제거</value></data>
+  <data name="AppButton_FileNotExist_Message" xml:space="preserve"><value>애플리케이션이 존재하지 않습니다:
+{0}
+
+다시 스캔하거나 목록에서 이 항목을 제거하세요.</value></data>
+  <data name="AppButton_FileNotExist_Title" xml:space="preserve"><value>파일을 찾을 수 없음</value></data>
+  <data name="AppButton_RemoveConfirm_Message" xml:space="preserve"><value>목록에서 '{0}'을(를) 제거하시겠습니까?</value></data>
+  <data name="AppButton_RemoveConfirm_Title" xml:space="preserve"><value>제거 확인</value></data>
+
+  <data name="Enum_SortMode_Name" xml:space="preserve"><value>이름순</value></data>
+  <data name="Enum_SortMode_Modified" xml:space="preserve"><value>수정 시간순</value></data>
+  <data name="Enum_SortMode_UseCount" xml:space="preserve"><value>사용 횟수순</value></data>
+  <data name="Enum_ThemeMode_Light" xml:space="preserve"><value>밝게</value></data>
+  <data name="Enum_ThemeMode_Dark" xml:space="preserve"><value>어둡게</value></data>
+  <data name="Enum_IconSize_Large" xml:space="preserve"><value>큼 (50×60)</value></data>
+  <data name="Enum_IconSize_Medium" xml:space="preserve"><value>중간 (40×50)</value></data>
+  <data name="Enum_IconSize_Small" xml:space="preserve"><value>작음 (30×40)</value></data>
+
+  <data name="Program_Exception_Message" xml:space="preserve"><value>프로그램 예외: {0}
+
+{1}</value></data>
+  <data name="Program_Exception_Title" xml:space="preserve"><value>오류</value></data>
+</root>

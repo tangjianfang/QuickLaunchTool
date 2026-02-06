@@ -2,6 +2,7 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 using QuickLaunchTool.Forms;
+using QuickLaunchTool.Utils;
 
 namespace QuickLaunchTool
 {
@@ -21,7 +22,12 @@ namespace QuickLaunchTool
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"程序异常: {ex.Message}\n{ex.StackTrace}", "错误", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                var localization = LocalizationManager.Instance;
+                MessageBox.Show(
+                    localization.GetString("Program_Exception_Message", ex.Message, ex.StackTrace),
+                    localization.GetString("Program_Exception_Title"),
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
             }
         }
     }

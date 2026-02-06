@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
@@ -84,6 +85,12 @@ namespace QuickLaunchTool.Models
         public IconSize IconSize { get; set; } = IconSize.Large;
 
         /// <summary>
+        /// 界面语言（如 zh-CN, en-US）
+        /// </summary>
+        [JsonProperty("language")]
+        public string Language { get; set; } = CultureInfo.CurrentUICulture.Name;
+
+        /// <summary>
         /// 缓存的应用程序路径列表
         /// </summary>
         [JsonProperty("cachedAppPaths")]
@@ -110,6 +117,20 @@ namespace QuickLaunchTool.Models
         /// </summary>
         public static AppConfig GetDefault()
         {
+            // 获取系统语言，如果不在支持的语言列表中则使用中文
+            var systemLang = CultureInfo.CurrentUICulture.Name;
+            var supportedLangs = new[] { "zh-CN", "en-US", "ja-JP", "ko-KR", "fr-FR", "de-DE", "es-ES" };
+            var defaultLang = "zh-CN";
+
+            foreach (var lang in supportedLangs)
+            {
+                if (systemLang.Equals(lang, StringComparison.OrdinalIgnoreCase))
+                {
+                    defaultLang = lang;
+                    break;
+                }
+            }
+
             return new AppConfig
             {
                 SortMode = SortMode.Name,
@@ -118,7 +139,8 @@ namespace QuickLaunchTool.Models
                 WindowSize = new Size(600, 400),
                 TopMost = true,
                 Opacity = 0.95,
-                IconSize = IconSize.Large
+                IconSize = IconSize.Large,
+                Language = defaultLang
             };
         }
     }
