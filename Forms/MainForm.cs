@@ -458,18 +458,18 @@ namespace QuickLaunchTool.Forms
                 if (newApps.Count > 0)
                 {
                     AddApps(newApps);
-                    MessageBox.Show(
-                        _localization.GetString("MainForm_ImportSuccess_Message", newApps.Count),
-                        _localization.GetString("MainForm_ImportSuccess_Title"),
-                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    //MessageBox.Show(
+                    //    _localization.GetString("MainForm_ImportSuccess_Message", newApps.Count),
+                    //    _localization.GetString("MainForm_ImportSuccess_Title"),
+                    //    MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
-                else
-                {
-                    MessageBox.Show(
-                        _localization.GetString("MainForm_NoNewApps_Message"),
-                        _localization.GetString("MainForm_NoNewApps_Title"),
-                        MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
+                //else
+                //{
+                //    MessageBox.Show(
+                //        _localization.GetString("MainForm_NoNewApps_Message"),
+                //        _localization.GetString("MainForm_NoNewApps_Title"),
+                //        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                //}
             }
             catch (Exception ex)
             {

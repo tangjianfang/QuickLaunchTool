@@ -2,7 +2,7 @@
 ; Requires Inno Setup 6 or later
 
 #define MyAppName "QuickLaunchTool"
-#define MyAppVersion "1.0.0"
+#define MyAppVersion "v1.0.0.1"
 #define MyAppPublisher "TJF"
 #define MyAppExeName "QuickLaunchTool.exe"
 #define MyAppURL "https://github.com/TJF/QuickLaunchTool"
