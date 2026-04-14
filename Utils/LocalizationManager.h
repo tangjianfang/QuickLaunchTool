@@ -51,9 +51,15 @@ public:
         // Tooltips
         TipAddFile,
         TipAddFolder,
+        TipAddCmdLine,
         TipImport,
         TipDelete,
         TipSettings,
+        // Add-command-line dialog
+        AddCmdLineTitle,
+        LabelCommand,
+        LabelDispName,
+        InvalidCmdMsg,
     };
 
 private:
@@ -120,9 +126,14 @@ private:
             m_strings[Key::SelectFolderTitle] = L"\u9009\u62E9\u6587\u4EF6\u5939";
             m_strings[Key::TipAddFile]        = L"\u6DFB\u52A0\u6587\u4EF6";
             m_strings[Key::TipAddFolder]      = L"\u6DFB\u52A0\u6587\u4EF6\u5939";
+            m_strings[Key::TipAddCmdLine]     = L"\u6DFB\u52A0\u547D\u4EE4\u884C\uFF08\u652F\u6301 PWA \u7B49\u5E26\u53C2\u6570\u7A0B\u5E8F\uFF09";
             m_strings[Key::TipImport]         = L"\u5BFC\u5165\u4EFB\u52A1\u680F\u5E94\u7528";
             m_strings[Key::TipDelete]         = L"\u5220\u9664\u9009\u4E2D\u9879";
             m_strings[Key::TipSettings]       = L"\u8BBE\u7F6E";
+            m_strings[Key::AddCmdLineTitle]   = L"\u6DFB\u52A0\u547D\u4EE4\u884C";
+            m_strings[Key::LabelCommand]      = L"\u547D\u4EE4\u884C\uFF1A";
+            m_strings[Key::LabelDispName]     = L"\u663E\u793A\u540D\u79F0\uFF08\u53EF\u9009\uFF09\uFF1A";
+            m_strings[Key::InvalidCmdMsg]     = L"\u8BF7\u8F93\u5165\u6709\u6548\u7684\u7A0B\u5E8F\u8DEF\u5F84\uFF08.exe / .bat / .cmd\uFF09\u3002";
         } else if (m_lang == L"en-US") {
             m_strings[Key::AppName]           = L"Quick Launch Tool";
             m_strings[Key::Search]            = L"Search";
@@ -158,9 +169,14 @@ private:
             m_strings[Key::SelectFolderTitle] = L"Select Folder";
             m_strings[Key::TipAddFile]        = L"Add File";
             m_strings[Key::TipAddFolder]      = L"Add Folder";
+            m_strings[Key::TipAddCmdLine]     = L"Add by command line (supports PWA and args)";
             m_strings[Key::TipImport]         = L"Import from Taskbar";
             m_strings[Key::TipDelete]         = L"Delete Selected";
             m_strings[Key::TipSettings]       = L"Settings";
+            m_strings[Key::AddCmdLineTitle]   = L"Add Command Line";
+            m_strings[Key::LabelCommand]      = L"Command:";
+            m_strings[Key::LabelDispName]     = L"Display Name (optional):";
+            m_strings[Key::InvalidCmdMsg]     = L"Please enter a valid program path (.exe / .bat / .cmd).";
         } else if (m_lang == L"ja-JP") {
             m_strings[Key::AppName]           = L"\u30AF\u30A4\u30C3\u30AF\u8D77\u52D5\u30C4\u30FC\u30EB";
             m_strings[Key::Search]            = L"\u691C\u7D22";
@@ -196,9 +212,14 @@ private:
             m_strings[Key::SelectFolderTitle] = L"\u30D5\u30A9\u30EB\u30C0\u3092\u9078\u629E";
             m_strings[Key::TipAddFile]        = m_strings[Key::AddFile];
             m_strings[Key::TipAddFolder]      = m_strings[Key::AddFolder];
+            m_strings[Key::TipAddCmdLine]     = L"\u30B3\u30DE\u30F3\u30C9\u30E9\u30A4\u30F3\u3067\u8FFD\u52A0\uFF08PWA \u306A\u3069\u5F15\u6570\u4ED8\u304D\u8D77\u52D5\u306B\u5BFE\u5FDC\uFF09";
             m_strings[Key::TipImport]         = m_strings[Key::ImportTaskbar];
             m_strings[Key::TipDelete]         = m_strings[Key::DeleteSelected];
             m_strings[Key::TipSettings]       = m_strings[Key::Settings];
+            m_strings[Key::AddCmdLineTitle]   = L"\u30B3\u30DE\u30F3\u30C9\u30E9\u30A4\u30F3\u3067\u8FFD\u52A0";
+            m_strings[Key::LabelCommand]      = L"\u30B3\u30DE\u30F3\u30C9\uFF1A";
+            m_strings[Key::LabelDispName]     = L"\u8868\u793A\u540D\uFF08\u7701\u7565\u53EF\uFF09\uFF1A";
+            m_strings[Key::InvalidCmdMsg]     = L"\u6709\u52B9\u306A\u30D7\u30ED\u30B0\u30E9\u30E0\u30D1\u30B9\uFF08.exe / .bat / .cmd\uFF09\u3092\u5165\u529B\u3057\u3066\u304F\u3060\u3055\u3044\u3002";
         } else if (m_lang == L"ko-KR") {
             m_strings[Key::AppName]           = L"\uBE60\uB978 \uC2E4\uD589 \uB3C4\uAD6C";
             m_strings[Key::Search]            = L"\uAC80\uC0C9";
@@ -234,9 +255,14 @@ private:
             m_strings[Key::SelectFolderTitle] = L"\uD3F4\uB354 \uC120\uD0DD";
             m_strings[Key::TipAddFile]        = m_strings[Key::AddFile];
             m_strings[Key::TipAddFolder]      = m_strings[Key::AddFolder];
+            m_strings[Key::TipAddCmdLine]     = L"\uBA85\uB839\uC904\uB85C \uCD94\uAC00\uFF08PWA \uB4F1 \uC778\uC218 \uD3EC\uD568 \uC571 \uC9C0\uC6D0\uFF09";
             m_strings[Key::TipImport]         = m_strings[Key::ImportTaskbar];
             m_strings[Key::TipDelete]         = m_strings[Key::DeleteSelected];
             m_strings[Key::TipSettings]       = m_strings[Key::Settings];
+            m_strings[Key::AddCmdLineTitle]   = L"\uBA85\uB839\uC904\uB85C \uCD94\uAC00";
+            m_strings[Key::LabelCommand]      = L"\uBA85\uB839\uC904\uFF1A";
+            m_strings[Key::LabelDispName]     = L"\uD45C\uC2DC \uC774\uB984\uFF08\uC120\uD0DD\uFF09\uFF1A";
+            m_strings[Key::InvalidCmdMsg]     = L"\uC720\uD6A8\uD55C \uD504\uB85C\uADF8\uB7A8 \uACBD\uB85C\uFF08.exe / .bat / .cmd\uFF09\uB97C \uC785\uB825\uD558\uC138\uC694.";
         } else if (m_lang == L"fr-FR") {
             m_strings[Key::AppName]           = L"Outil de lancement rapide";
             m_strings[Key::Search]            = L"Rechercher";
@@ -272,9 +298,14 @@ private:
             m_strings[Key::SelectFolderTitle] = L"S\u00E9lectionner un dossier";
             m_strings[Key::TipAddFile]        = m_strings[Key::AddFile];
             m_strings[Key::TipAddFolder]      = m_strings[Key::AddFolder];
+            m_strings[Key::TipAddCmdLine]     = L"Ajouter par ligne de commande (PWA et apps avec arguments)";
             m_strings[Key::TipImport]         = m_strings[Key::ImportTaskbar];
             m_strings[Key::TipDelete]         = m_strings[Key::DeleteSelected];
             m_strings[Key::TipSettings]       = m_strings[Key::Settings];
+            m_strings[Key::AddCmdLineTitle]   = L"Ajouter par ligne de commande";
+            m_strings[Key::LabelCommand]      = L"Commande\u00A0:";
+            m_strings[Key::LabelDispName]     = L"Nom d'affichage (facultatif)\u00A0:";
+            m_strings[Key::InvalidCmdMsg]     = L"Veuillez entrer un chemin valide (.exe / .bat / .cmd).";
         } else if (m_lang == L"de-DE") {
             m_strings[Key::AppName]           = L"Schnellstart-Tool";
             m_strings[Key::Search]            = L"Suchen";
@@ -310,9 +341,14 @@ private:
             m_strings[Key::SelectFolderTitle] = L"Ordner ausw\u00E4hlen";
             m_strings[Key::TipAddFile]        = m_strings[Key::AddFile];
             m_strings[Key::TipAddFolder]      = m_strings[Key::AddFolder];
+            m_strings[Key::TipAddCmdLine]     = L"Per Befehlszeile hinzuf\u00FCgen (PWA und Apps mit Argumenten)";
             m_strings[Key::TipImport]         = m_strings[Key::ImportTaskbar];
             m_strings[Key::TipDelete]         = m_strings[Key::DeleteSelected];
             m_strings[Key::TipSettings]       = m_strings[Key::Settings];
+            m_strings[Key::AddCmdLineTitle]   = L"Befehlszeile hinzuf\u00FCgen";
+            m_strings[Key::LabelCommand]      = L"Befehlszeile:";
+            m_strings[Key::LabelDispName]     = L"Anzeigename (optional):";
+            m_strings[Key::InvalidCmdMsg]     = L"Bitte geben Sie einen g\u00FCltigen Programmpfad (.exe / .bat / .cmd) ein.";
         } else if (m_lang == L"es-ES") {
             m_strings[Key::AppName]           = L"Herramienta de inicio r\u00E1pido";
             m_strings[Key::Search]            = L"Buscar";
@@ -348,9 +384,14 @@ private:
             m_strings[Key::SelectFolderTitle] = L"Seleccionar carpeta";
             m_strings[Key::TipAddFile]        = m_strings[Key::AddFile];
             m_strings[Key::TipAddFolder]      = m_strings[Key::AddFolder];
+            m_strings[Key::TipAddCmdLine]     = L"A\u00F1adir por l\u00EDnea de comandos (compatible con PWA y apps con argumentos)";
             m_strings[Key::TipImport]         = m_strings[Key::ImportTaskbar];
             m_strings[Key::TipDelete]         = m_strings[Key::DeleteSelected];
             m_strings[Key::TipSettings]       = m_strings[Key::Settings];
+            m_strings[Key::AddCmdLineTitle]   = L"A\u00F1adir l\u00EDnea de comandos";
+            m_strings[Key::LabelCommand]      = L"Comando:";
+            m_strings[Key::LabelDispName]     = L"Nombre (opcional):";
+            m_strings[Key::InvalidCmdMsg]     = L"Ingrese una ruta v\u00E1lida (.exe / .bat / .cmd).";
         } else {
             m_lang = L"zh-CN";
             Load();

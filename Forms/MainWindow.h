@@ -55,6 +55,7 @@ private:
 
     void AddFile();
     void AddFolder();
+    void AddByCommandLine();
     void ImportTaskbar();
     void DeleteSelected();
     void HandleDropFiles(HDROP hDrop);
@@ -89,7 +90,7 @@ private:
         wchar_t glyph;      // Segoe MDL2 Assets code point
         int     x, w;       // filled in during layout
     };
-    TBBtn m_btns[5];
+    TBBtn m_btns[6];
     HFONT m_hMDL2Font = nullptr;
 
     static const int TOOLBAR_H = 44;

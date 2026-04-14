@@ -27,10 +27,18 @@
 // Toolbar / main window command IDs
 #define ID_TOOLBAR_ADDFILE      2001
 #define ID_TOOLBAR_ADDFOLDER    2002
-#define ID_TOOLBAR_IMPORT       2003
-#define ID_TOOLBAR_DELETE       2004
-#define ID_TOOLBAR_SETTINGS     2005
-#define ID_SEARCH_EDIT          2006
+#define ID_TOOLBAR_ADDCMD       2003
+#define ID_TOOLBAR_IMPORT       2004
+#define ID_TOOLBAR_DELETE       2005
+#define ID_TOOLBAR_SETTINGS     2006
+#define ID_SEARCH_EDIT          2007
+
+// Add-command-line dialog
+#define IDD_ADDCMD              101
+#define IDC_EDIT_ADDCMD_CMD     1030
+#define IDC_EDIT_ADDCMD_NAME    1031
+#define IDC_LABEL_ADDCMD_CMD    1032
+#define IDC_LABEL_ADDCMD_NAME   1033
 
 // Context menu IDs
 #define ID_CTX_LAUNCH           3001

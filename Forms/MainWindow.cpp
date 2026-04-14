@@ -35,9 +35,95 @@ MainWindow* MainWindow::s_instance = nullptr;
 // Segoe MDL2 Assets (Win10+)
 static const wchar_t GLYPH_ADDFILE   = L'\uE8A5'; // DocumentAdd
 static const wchar_t GLYPH_ADDFOLDER = L'\uED43'; // FolderAdd
+static const wchar_t GLYPH_ADDCMD    = L'\uE756'; // CommandPrompt (for command-line / PWA add)
 static const wchar_t GLYPH_IMPORT    = L'\uE898'; // Download/Import
 static const wchar_t GLYPH_DELETE    = L'\uE74D'; // Delete
 static const wchar_t GLYPH_SETTINGS  = L'\uE713'; // Settings
+
+// ── Add-command-line dialog data ──────────────────────────────────────────────
+struct AddCmdDlgData {
+    std::wstring command;
+    std::wstring name;
+    HINSTANCE    hInst;
+};
+
+// Parse a command line into (exe path, args).
+// Handles both quoted paths and unquoted paths with spaces.
+static void SplitCommand(const std::wstring& cmd,
+                         std::wstring& outPath, std::wstring& outArgs) {
+    const wchar_t* p = cmd.c_str();
+    while (*p == L' ' || *p == L'\t') ++p;          // skip leading whitespace
+
+    if (*p == L'"') {                                 // quoted path
+        ++p;
+        const wchar_t* start = p;
+        while (*p && *p != L'"') ++p;
+        outPath = std::wstring(start, p - start);
+        if (*p == L'"') ++p;
+    } else {                                          // unquoted – stop at first space
+        const wchar_t* start = p;
+        while (*p && *p != L' ' && *p != L'\t') ++p;
+        outPath = std::wstring(start, p - start);
+    }
+
+    while (*p == L' ' || *p == L'\t') ++p;           // skip whitespace before args
+    outArgs = (*p) ? std::wstring(p) : L"";
+}
+
+// Returns true if ext is a launchable extension (.exe / .bat / .cmd)
+static bool IsLaunchableExt(const std::wstring& path) {
+    const wchar_t* dot = wcsrchr(path.c_str(), L'.');
+    if (!dot) return false;
+    return _wcsicmp(dot, L".exe") == 0
+        || _wcsicmp(dot, L".bat") == 0
+        || _wcsicmp(dot, L".cmd") == 0;
+}
+
+static INT_PTR CALLBACK AddCmdDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
+    AddCmdDlgData* data = reinterpret_cast<AddCmdDlgData*>(
+        GetWindowLongPtrW(hDlg, DWLP_USER));
+
+    switch (msg) {
+    case WM_INITDIALOG: {
+        SetWindowLongPtrW(hDlg, DWLP_USER, lParam);
+        data = reinterpret_cast<AddCmdDlgData*>(lParam);
+
+        auto* loc = QuickLaunchTool::LocalizationManager::GetInstance();
+        SetWindowTextW(hDlg, loc->Get(QuickLaunchTool::LocalizationManager::Key::AddCmdLineTitle).c_str());
+        SetDlgItemTextW(hDlg, IDC_LABEL_ADDCMD_CMD,
+            loc->Get(QuickLaunchTool::LocalizationManager::Key::LabelCommand).c_str());
+        SetDlgItemTextW(hDlg, IDC_LABEL_ADDCMD_NAME,
+            loc->Get(QuickLaunchTool::LocalizationManager::Key::LabelDispName).c_str());
+        SetDlgItemTextW(hDlg, IDOK,
+            loc->Get(QuickLaunchTool::LocalizationManager::Key::OK).c_str());
+        SetDlgItemTextW(hDlg, IDCANCEL,
+            loc->Get(QuickLaunchTool::LocalizationManager::Key::Cancel).c_str());
+
+        // Limit command edit to 4096 chars (long PWA args)
+        SendDlgItemMessageW(hDlg, IDC_EDIT_ADDCMD_CMD, EM_SETLIMITTEXT, 4096, 0);
+        SendDlgItemMessageW(hDlg, IDC_EDIT_ADDCMD_NAME, EM_SETLIMITTEXT, MAX_PATH, 0);
+
+        SetFocus(GetDlgItem(hDlg, IDC_EDIT_ADDCMD_CMD));
+        return FALSE; // we set focus manually
+    }
+    case WM_COMMAND:
+        if (LOWORD(wParam) == IDOK && data) {
+            wchar_t buf[4096] = {};
+            GetDlgItemTextW(hDlg, IDC_EDIT_ADDCMD_CMD,  buf, 4096);
+            data->command = buf;
+            GetDlgItemTextW(hDlg, IDC_EDIT_ADDCMD_NAME, buf, MAX_PATH);
+            data->name = buf;
+            EndDialog(hDlg, IDOK);
+            return TRUE;
+        }
+        if (LOWORD(wParam) == IDCANCEL) {
+            EndDialog(hDlg, IDCANCEL);
+            return TRUE;
+        }
+        break;
+    }
+    return FALSE;
+}
 
 // ── Construction / Destruction ────────────────────────────────────────────────
 
@@ -45,9 +131,10 @@ MainWindow::MainWindow() {
     s_instance = this;
     m_btns[0] = { ID_TOOLBAR_ADDFILE,   GLYPH_ADDFILE,   0, BTN_W };
     m_btns[1] = { ID_TOOLBAR_ADDFOLDER, GLYPH_ADDFOLDER, 0, BTN_W };
-    m_btns[2] = { ID_TOOLBAR_IMPORT,    GLYPH_IMPORT,    0, BTN_W };
-    m_btns[3] = { ID_TOOLBAR_DELETE,    GLYPH_DELETE,    0, BTN_W };
-    m_btns[4] = { ID_TOOLBAR_SETTINGS,  GLYPH_SETTINGS,  0, BTN_W };
+    m_btns[2] = { ID_TOOLBAR_ADDCMD,    GLYPH_ADDCMD,    0, BTN_W };
+    m_btns[3] = { ID_TOOLBAR_IMPORT,    GLYPH_IMPORT,    0, BTN_W };
+    m_btns[4] = { ID_TOOLBAR_DELETE,    GLYPH_DELETE,    0, BTN_W };
+    m_btns[5] = { ID_TOOLBAR_SETTINGS,  GLYPH_SETTINGS,  0, BTN_W };
 }
 
 MainWindow::~MainWindow() {
@@ -211,12 +298,13 @@ void MainWindow::SetupTooltips() {
     LocalizationManager::Key tips[] = {
         LocalizationManager::Key::TipAddFile,
         LocalizationManager::Key::TipAddFolder,
+        LocalizationManager::Key::TipAddCmdLine,
         LocalizationManager::Key::TipImport,
         LocalizationManager::Key::TipDelete,
         LocalizationManager::Key::TipSettings,
     };
 
-    for (int i = 0; i < 5; ++i) {
+    for (int i = 0; i < 6; ++i) {
         TOOLINFOW tip = {};
         tip.cbSize   = sizeof(tip);
         tip.uFlags   = TTF_SUBCLASS;
@@ -419,6 +507,35 @@ void MainWindow::AddFolder() {
     CoTaskMemFree(pidl);
 }
 
+void MainWindow::AddByCommandLine() {
+    AddCmdDlgData data;
+    data.hInst = m_hInst;
+
+    if (DialogBoxParamW(m_hInst, MAKEINTRESOURCEW(IDD_ADDCMD),
+                        m_hWnd, AddCmdDlgProc,
+                        reinterpret_cast<LPARAM>(&data)) != IDOK)
+        return;
+
+    // Trim whitespace from the command
+    const std::wstring& cmd = data.command;
+    if (cmd.empty()) return;
+
+    std::wstring exePath, args;
+    SplitCommand(cmd, exePath, args);
+
+    if (exePath.empty() || !IsLaunchableExt(exePath)) {
+        auto* loc = LocalizationManager::GetInstance();
+        MessageBoxW(m_hWnd,
+            loc->Get(LocalizationManager::Key::InvalidCmdMsg).c_str(),
+            loc->Get(LocalizationManager::Key::AppName).c_str(),
+            MB_OK | MB_ICONWARNING);
+        return;
+    }
+
+    ConfigManager::GetInstance()->AddApp(exePath, args, data.name);
+    LoadApps();
+}
+
 void MainWindow::ImportTaskbar() {
     auto apps = FileScanner::GetTaskbarPinnedApps();
     for (const auto& a : apps)
@@ -604,10 +721,11 @@ int MainWindow::ToolbarHitTest(int x, int y) const {
 
 void MainWindow::HandleToolbarClick(int cmdId) {
     switch (cmdId) {
-        case ID_TOOLBAR_ADDFILE:   AddFile();        break;
-        case ID_TOOLBAR_ADDFOLDER: AddFolder();      break;
-        case ID_TOOLBAR_IMPORT:    ImportTaskbar();  break;
-        case ID_TOOLBAR_DELETE:    DeleteSelected(); break;
+        case ID_TOOLBAR_ADDFILE:   AddFile();           break;
+        case ID_TOOLBAR_ADDFOLDER: AddFolder();         break;
+        case ID_TOOLBAR_ADDCMD:    AddByCommandLine();  break;
+        case ID_TOOLBAR_IMPORT:    ImportTaskbar();     break;
+        case ID_TOOLBAR_DELETE:    DeleteSelected();    break;
         case ID_TOOLBAR_SETTINGS:
             SettingsDialog::Show(m_hWnd);
             break;

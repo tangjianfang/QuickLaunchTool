@@ -45,6 +45,27 @@ BEGIN
     PUSHBUTTON      "",    IDCANCEL, 212, 106,  48, 14, WS_TABSTOP
 END
 
+// ── Add-command-line dialog ───────────────────────────────────────────────────
+// Labels set at runtime (localization).  Wide command edit to fit long PWA args.
+
+IDD_ADDCMD DIALOGEX 0, 0, 370, 76
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Add Command"
+FONT 9, "Segoe UI"
+BEGIN
+    RTEXT    "",  IDC_LABEL_ADDCMD_CMD,   6, 14, 62, 9
+    EDITTEXT      IDC_EDIT_ADDCMD_CMD,   72, 10, 290, 14,
+                  ES_AUTOHSCROLL | WS_TABSTOP
+
+    RTEXT    "",  IDC_LABEL_ADDCMD_NAME,  6, 34, 62, 9
+    EDITTEXT      IDC_EDIT_ADDCMD_NAME,  72, 30, 290, 14,
+                  ES_AUTOHSCROLL | WS_TABSTOP
+
+    CONTROL  "",  IDC_STATIC, "STATIC", SS_ETCHEDHORZ, 6, 52, 358, 1
+    DEFPUSHBUTTON "", IDOK,     264, 58, 48, 14, WS_TABSTOP
+    PUSHBUTTON    "", IDCANCEL, 316, 58, 48, 14, WS_TABSTOP
+END
+
 // ── DPI awareness & Common Controls v6 manifest ───────────────────────────────
 1 RT_MANIFEST
 BEGIN

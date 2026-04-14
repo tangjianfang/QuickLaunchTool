@@ -29,31 +29,42 @@ public:
         return results;
     }
 
-    // Return full info (path + args + name) for all .lnk files in the
-    // Windows Taskbar pinned apps folder.  Preserves PWA arguments.
+    // Return full info (path + args + name) for pinned apps.
+    // Scans two locations:
+    //   1. Taskbar pinned folder  (%APPDATA%\...\Quick Launch\User Pinned\TaskBar)
+    //   2. Start Menu Programs subdirectories whose shortcuts target chrome_proxy.exe
+    //      (the directory Chrome creates per-locale, e.g. "Chrome Apps" / "Chrome 应用")
     static std::vector<LnkInfo> GetTaskbarPinnedApps() {
         std::vector<LnkInfo> results;
 
         wchar_t buf[MAX_PATH] = {};
-        // %APPDATA%\Microsoft\Internet Explorer\Quick Launch\User Pinned\TaskBar
         if (FAILED(SHGetFolderPathW(nullptr, CSIDL_APPDATA, nullptr, 0, buf)))
             return results;
 
-        std::wstring dir = std::wstring(buf)
+        // ── 1. Taskbar pinned folder ─────────────────────────────────────
+        std::wstring taskbarDir = std::wstring(buf)
             + L"\\Microsoft\\Internet Explorer\\Quick Launch\\User Pinned\\TaskBar";
+        ScanLnkDir(taskbarDir, results, nullptr);
 
-        WIN32_FIND_DATAW fd;
-        HANDLE hFind = FindFirstFileW((dir + L"\\*.lnk").c_str(), &fd);
-        if (hFind == INVALID_HANDLE_VALUE) return results;
+        // ── 2. Chrome PWAs from Start Menu Programs subdirs ──────────────
+        wchar_t progBuf[MAX_PATH] = {};
+        if (SUCCEEDED(SHGetFolderPathW(nullptr, CSIDL_PROGRAMS, nullptr, 0, progBuf))) {
+            // Enumerate one level of subdirectories (e.g. "Chrome Apps", "Chrome 应用")
+            WIN32_FIND_DATAW fd;
+            HANDLE hFind = FindFirstFileW((std::wstring(progBuf) + L"\\*").c_str(), &fd);
+            if (hFind != INVALID_HANDLE_VALUE) {
+                do {
+                    if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) continue;
+                    if (wcscmp(fd.cFileName, L".") == 0)  continue;
+                    if (wcscmp(fd.cFileName, L"..") == 0) continue;
+                    std::wstring subDir = std::wstring(progBuf) + L"\\" + fd.cFileName;
+                    // Only collect shortcuts that target chrome_proxy.exe with --app-id
+                    ScanLnkDir(subDir, results, L"chrome_proxy.exe");
+                } while (FindNextFileW(hFind, &fd));
+                FindClose(hFind);
+            }
+        }
 
-        do {
-            if (fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) continue;
-            std::wstring lnkPath = dir + L"\\" + fd.cFileName;
-            LnkInfo info = ResolveLnkFull(lnkPath);
-            if (!info.path.empty()) results.push_back(std::move(info));
-        } while (FindNextFileW(hFind, &fd));
-
-        FindClose(hFind);
         return results;
     }
 
@@ -106,6 +117,36 @@ public:
     }
 
 private:
+    // Scan a directory for .lnk files and resolve each one.
+    // If exeFilter is non-null, only include shortcuts whose target filename
+    // matches (case-insensitive) and that contain "--app-id" in their args.
+    static void ScanLnkDir(const std::wstring& dir,
+                            std::vector<LnkInfo>& out,
+                            const wchar_t* exeFilter) {
+        WIN32_FIND_DATAW fd;
+        HANDLE hFind = FindFirstFileW((dir + L"\\*.lnk").c_str(), &fd);
+        if (hFind == INVALID_HANDLE_VALUE) return;
+
+        do {
+            if (fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) continue;
+            LnkInfo info = ResolveLnkFull(dir + L"\\" + fd.cFileName);
+            if (info.path.empty()) continue;
+
+            if (exeFilter) {
+                // Only accept shortcuts targeting the specified exe
+                const wchar_t* fn = wcsrchr(info.path.c_str(), L'\\');
+                fn = fn ? fn + 1 : info.path.c_str();
+                if (_wcsicmp(fn, exeFilter) != 0) continue;
+                // And only if they carry --app-id (identifies a real PWA)
+                if (info.args.find(L"--app-id") == std::wstring::npos) continue;
+            }
+
+            out.push_back(std::move(info));
+        } while (FindNextFileW(hFind, &fd));
+
+        FindClose(hFind);
+    }
+
     static void ScanDir(const std::wstring& dir, bool recursive,
                         std::vector<std::wstring>& out) {
         WIN32_FIND_DATAW fd;
