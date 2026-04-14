@@ -1,173 +1,114 @@
-# QuickLaunchTool
+# QuickLaunchTool (C++)
 
-A lightweight and efficient application launcher for Windows that helps you quickly launch your frequently used applications.
+A lightweight Windows application launcher built with pure C++ and the Win32 API. No .NET runtime, no MFC, no external dependencies — just a single native executable.
 
 ![Main Interface](./Images/screenshot-main.png)
 
 ## Features
 
-- **Quick Launch**: Double-click to launch applications, or right-click for more options
-- **Multi-language Support**: Supports 7 languages (Simplified Chinese, English, Japanese, Korean, French, German, Spanish)
-- **Theme Support**: Light and Dark themes
-- **Customizable UI**: Adjustable icon sizes (Large, Medium, Small)
-- **Smart Search**: Real-time search and filter applications
-- **Flexible Management**:
-  - Add individual files
-  - Add entire folders with recursive scanning
-  - Import from Windows Taskbar
-  - Delete applications with confirmation
-- **Sorting Options**: Sort by name, modified time, or usage count
-- **Auto-Save**: Application list is automatically saved and restored on next launch
-- **Context Menu**: Right-click menu with multiple options:
-  - Launch
-  - Run as Administrator
-  - Open file location
-  - View properties
-  - Remove from list
+- **Quick Launch** — Double-click to launch; right-click for a context menu
+- **Icon Buttons Toolbar** — Add File, Add Folder, Import Taskbar, Delete, Settings (Segoe MDL2 Assets glyphs)
+- **Real-time Search** — Filter the app list as you type
+- **Multi-language** — Simplified Chinese, English, Japanese, Korean, French, German, Spanish
+- **Light / Dark Theme** — Native Win10 dark title bar via DWM
+- **Icon Sizes** — Large (48 px), Medium (32 px), Small (24 px)
+- **Sort Modes** — By name, last modified date, or usage count (persisted across sessions)
+- **Flexible Management**
+  - Add individual `.exe` / `.bat` / `.cmd` files
+  - Recursively scan and add an entire folder
+  - Import pinned apps from the Windows Taskbar (resolves `.lnk` shortcuts via COM)
+  - Ctrl+click multi-select → bulk delete
+- **Window Settings** — Always-on-top, opacity (10–100 %), window position and size auto-saved
+- **Zero-flicker Rendering** — Double-buffered icon grid
 
 ## System Requirements
 
-- Windows 7 or later
-- .NET 6.0 Runtime or higher
+- Windows 10 or later (x64)
+- Visual Studio 2022 (for building from source)
 
-## Usage
+## Building
 
-### Adding Applications
+```bat
+build.bat          :: Release build (default)
+build.bat Debug    :: Debug build
+```
 
-1. **Add Files**: Click the "Add File" button and select executable files
-2. **Add Folder**: Click the "Add Folder" button to scan and add all executables from a folder
-3. **Import Taskbar**: Click "Import Taskbar" to import pinned applications from Windows Taskbar
+Output: `bin\Release\QuickLaunchToolCpp.exe` (no installer, no runtime required)
 
-### Managing Applications
+### Prerequisites
 
-- **Launch**: Double-click an app icon to launch
-- **Select Multiple**: Hold Ctrl and click to select multiple applications
-- **Delete Selected**: Select apps and click "Delete Selected" button
-- **Context Menu**: Right-click an app icon for additional options
+- [CMake 3.20+](https://cmake.org/download/)
+- Visual Studio 2022 with **Desktop development with C++** workload
 
-### Search and Filter
-
-- Type in the search box at the top to filter applications in real-time
-
-### Settings
-
-Click the "Settings" button to configure:
-- Language
-- Theme (Light/Dark)
-- Icon size
-- Window position and opacity
-- Application sort mode
-- Always on top mode
-
-## Architecture
-
-### Core Components
-
-- **MainForm**: Main window and application management logic
-- **AppButton**: Custom control for individual application buttons
-- **ProcessLauncher**: Service for launching applications
-- **FileScanner**: Service for scanning directories
-- **ConfigManager**: Configuration persistence
-- **LocalizationManager**: Multi-language support
-- **ThemeManager**: Theme management
-- **IconExtractor**: Icon extraction from applications
-
-### Data Structure
-
-- **AppInfo**: Stores application information (name, path, icon, usage count, etc.)
-- **AppConfig**: Stores user configuration (theme, language, window state, etc.)
-
-## Technical Details
-
-- Built with WinForms (.NET 6.0)
-- Resource-based localization system
-- Asynchronous icon loading for better UI responsiveness
-- COM-based shortcuts parsing for taskbar import
-- Automatic icon caching
-
-## Building and Publishing
-
-### Building from Source
+### Manual build
 
 ```bash
-dotnet build
+cmake -B build -G "Visual Studio 17 2022" -A x64
+cmake --build build --config Release
 ```
-
-### Publishing Self-Contained Executable
-
-To create a standalone executable that doesn't require .NET runtime installation:
-
-```bash
-dotnet publish -c Release -r win10-x64 --self-contained true -p:PublishSingleFile=true
-```
-
-The output will be located in:
-```
-bin\Release\net6.0-windows\win10-x64\publish\
-```
-
-### Publishing Framework-Dependent Executable
-
-To create a smaller executable that requires .NET 6.0 runtime:
-
-```bash
-dotnet publish -c Release
-```
-
-The output will be located in:
-```
-bin\Release\net6.0-windows\publish\
-```
-
-### Creating Installer
-
-1. Install [Inno Setup 6](https://jrsoftware.org/isdl.php)
-2. Choose one of the installer scripts:
-   - **QuickLaunchTool.iss**: Full installer with bundled .NET runtime (~60MB)
-   - **QuickLaunchTool-Lite.iss**: Lite installer, requires users to download .NET 6.0 runtime (~5MB)
-3. Open the chosen `.iss` file in Inno Setup Compiler
-4. Click "Compile" to generate the installer
-5. The installer will be created in the `installer\` directory
 
 ## Configuration
 
-Settings are saved in:
-```
-%APPDATA%\QuickLaunchTool\config.json
-```
-
-Application cache is stored in the same configuration file.
-
-## File Structure
+Settings are saved automatically to:
 
 ```
-QuickLaunchTool/
-├── Forms/              # UI forms
-│   ├── MainForm.cs
-│   └── SettingsForm.cs
-├── Controls/           # Custom controls
-│   └── AppButton.cs
-├── Services/           # Business logic
-│   ├── FileScanner.cs
-│   ├── ProcessLauncher.cs
-│   ├── IconExtractor.cs
-│   └── ConfigManager.cs
-├── Utils/              # Utilities
-│   ├── LocalizationManager.cs
-│   ├── ThemeManager.cs
-│   ├── CacheManager.cs
-│   └── Logger.cs
-├── Models/             # Data models
-│   ├── AppInfo.cs
-│   └── AppConfig.cs
-└── Resources/          # Localization resources
-    └── Strings.*.resx
+%APPDATA%\QuickLaunchToolCpp\config.json
 ```
+
+The file stores window geometry, sort mode, theme, icon size, opacity, language, app paths, and per-app usage counts.
+
+## Usage
+
+| Action | How |
+|--------|-----|
+| Launch app | Double-click icon |
+| Select | Single-click (Ctrl+click for multi-select) |
+| Context menu | Right-click icon |
+| Search | Type in the search box (top-left) |
+| Add file | Toolbar: Add File button |
+| Add folder | Toolbar: Add Folder button (recursive scan) |
+| Import from Taskbar | Toolbar: Import button |
+| Delete selected | Toolbar: Delete button |
+| Settings | Toolbar: Settings button (gear icon, far right) |
+
+## Architecture
+
+Pure C++17 / Win32 API. No external libraries.
+
+```
+Main.cpp                    Entry point (DPI awareness, COM, CommonControls)
+Statics.cpp                 Static singleton members
+
+Models/
+  AppInfo.h                 App data: name, path, icon handle, use count
+  AppConfig.h               User config + enums (SortMode, ThemeMode, IconSize)
+
+Utils/
+  JsonHelper.h              Hand-rolled JSON parser/builder
+  ThemeManager.h            Colors, brushes, DWM dark title bar, opacity
+  LocalizationManager.h     Inline string tables for 7 languages
+
+Services/
+  ConfigManager.h           Reads/writes config.json
+  FileScanner.h             Folder scan + IShellLink .lnk resolution
+  IconExtractor.h           SHGetImageList-based icon extraction (24/32/48 px)
+  ProcessLauncher.h         ShellExecute launch / runas / open location
+
+Controls/
+  AppGrid.h / .cpp          Double-buffered scrollable icon grid
+                            Posts WMG_LAUNCH / WMG_SELECT / WMG_CONTEXTMENU to parent
+
+Forms/
+  MainWindow.h / .cpp       Main window, custom-drawn MDL2 toolbar
+  SettingsDialog.h / .cpp   Modal dialog via DialogBoxParam + .rc resource
+
+Resources/
+  Resource.h                All resource IDs and custom WM_APP message constants
+  Resource.rc               IDD_SETTINGS dialog + DPI / CommonControls manifest
+```
+
+**Icon ownership**: `MainWindow::m_apps` owns all `HICON` handles. `AppGrid` and the filtered-index list hold raw pointers/indices only — no double-free risk.
 
 ## License
 
-This project is open source and available under the MIT License.
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit pull requests or open issues for bugs and feature suggestions.
+MIT

@@ -1,0 +1,70 @@
+#include "Resource.h"
+#include <windows.h>
+#include <commctrl.h>
+
+IDI_APP_ICON ICON "QuickLaunchTool.ico"
+
+// ── Settings dialog ───────────────────────────────────────────────────────────
+// Compact dark layout. Labels are set at runtime (localization).
+// Row stride: 18 DU.  Total height: 126 DU.
+
+IDD_SETTINGS DIALOGEX 0, 0, 270, 126
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Settings"
+FONT 9, "Segoe UI"
+BEGIN
+    // Language  (row 1, y=10)
+    RTEXT           "",    IDC_LABEL_LANGUAGE,   8,  14, 78,  9
+    COMBOBOX                IDC_COMBO_LANGUAGE,  90,  10, 170, 110,
+                            CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+
+    // Sort mode  (row 2, y=28)
+    RTEXT           "",    IDC_LABEL_SORT,       8,  32, 78,  9
+    COMBOBOX                IDC_COMBO_SORT,      90,  28, 170,  80,
+                            CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+
+    // Icon size  (row 3, y=46)
+    RTEXT           "",    IDC_LABEL_ICONSIZE,   8,  50, 78,  9
+    COMBOBOX                IDC_COMBO_ICONSIZE,  90,  46, 170,  70,
+                            CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+
+    // Opacity  (row 4, y=64)
+    RTEXT           "",    IDC_LABEL_OPACITY,    8,  68, 78,  9
+    CONTROL         "",    IDC_SLIDER_OPACITY,
+                            "msctls_trackbar32",
+                            TBS_HORZ | TBS_AUTOTICKS | WS_TABSTOP,
+                            90, 64, 148, 16
+    LTEXT           "",    IDC_STATIC_OPACITY_VAL, 242, 68, 24, 9
+
+    // Always on top  (row 5, y=83)
+    AUTOCHECKBOX    "",    IDC_CHECK_TOPMOST,    90,  83, 170, 10, WS_TABSTOP
+
+    // Separator + buttons
+    CONTROL         "",    IDC_STATIC, "STATIC", SS_ETCHEDHORZ, 8, 98, 254, 1
+    DEFPUSHBUTTON   "",    IDOK,     160, 106,  48, 14, WS_TABSTOP
+    PUSHBUTTON      "",    IDCANCEL, 212, 106,  48, 14, WS_TABSTOP
+END
+
+// ── DPI awareness & Common Controls v6 manifest ───────────────────────────────
+1 RT_MANIFEST
+BEGIN
+    "<?xml version=""1.0"" encoding=""UTF-8"" standalone=""yes""?>"
+    "<assembly xmlns=""urn:schemas-microsoft-com:asm.v1"" manifestVersion=""1.0"">"
+    "  <assemblyIdentity version=""1.0.0.0"" processorArchitecture=""*"""
+    "      name=""QuickLaunchToolCpp"" type=""win32""/>"
+    "  <dependency>"
+    "    <dependentAssembly>"
+    "      <assemblyIdentity type=""win32"""
+    "          name=""Microsoft.Windows.Common-Controls"" version=""6.0.0.0"""
+    "          processorArchitecture=""*"" publicKeyToken=""6595b64144ccf1df"""
+    "          language=""*""/>"
+    "    </dependentAssembly>"
+    "  </dependency>"
+    "  <asmv3:application xmlns:asmv3=""urn:schemas-microsoft-com:asm.v3"">"
+    "    <asmv3:windowsSettings>"
+    "      <dpiAware xmlns=""http://schemas.microsoft.com/SMI/2005/WindowsSettings"">True/PM</dpiAware>"
+    "      <dpiAwareness xmlns=""http://schemas.microsoft.com/SMI/2016/WindowsSettings"">PerMonitorV2</dpiAwareness>"
+    "    </asmv3:windowsSettings>"
+    "  </asmv3:application>"
+    "</assembly>"
+END
