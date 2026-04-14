@@ -23,7 +23,9 @@ struct AppConfig {
     int          windowH   = 600;
 
     std::vector<std::wstring>   cachedAppPaths;
-    std::map<std::wstring, int> useCountMap;    // path (lowercase) → count
+    std::vector<std::wstring>   cachedAppArgs;   // parallel to cachedAppPaths; empty = no args
+    std::vector<std::wstring>   cachedAppNames;  // parallel to cachedAppPaths; empty = derive from exe
+    std::map<std::wstring, int> useCountMap;     // AppKey(path,args) lowercase → count
 
     // Icon pixel dimensions
     int GetIconDimensions() const {

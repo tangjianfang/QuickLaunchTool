@@ -12,18 +12,20 @@ namespace QuickLaunchTool {
 
 class ProcessLauncher {
 public:
-    static bool Launch(const std::wstring& path) {
+    static bool Launch(const std::wstring& path, const std::wstring& args = L"") {
         HINSTANCE r = ShellExecuteW(nullptr, L"open", path.c_str(),
-                                    nullptr, nullptr, SW_SHOWNORMAL);
+                                    args.empty() ? nullptr : args.c_str(),
+                                    nullptr, SW_SHOWNORMAL);
         return reinterpret_cast<INT_PTR>(r) > 32;
     }
 
-    static bool LaunchAsAdmin(const std::wstring& path) {
+    static bool LaunchAsAdmin(const std::wstring& path, const std::wstring& args = L"") {
         SHELLEXECUTEINFOW sei = {};
-        sei.cbSize  = sizeof(sei);
-        sei.lpVerb  = L"runas";
-        sei.lpFile  = path.c_str();
-        sei.nShow   = SW_SHOWNORMAL;
+        sei.cbSize       = sizeof(sei);
+        sei.lpVerb       = L"runas";
+        sei.lpFile       = path.c_str();
+        sei.lpParameters = args.empty() ? nullptr : args.c_str();
+        sei.nShow        = SW_SHOWNORMAL;
         return ShellExecuteExW(&sei) != FALSE;
     }
 

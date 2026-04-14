@@ -273,11 +273,16 @@ void MainWindow::LoadApps() {
     auto& cfg  = ConfigManager::GetInstance()->Config();
     int   px   = cfg.GetIconDimensions();
 
-    for (const auto& path : cfg.cachedAppPaths) {
+    for (size_t i = 0; i < cfg.cachedAppPaths.size(); ++i) {
+        const auto& path      = cfg.cachedAppPaths[i];
+        const auto& args      = (i < cfg.cachedAppArgs.size())  ? cfg.cachedAppArgs[i]  : L"";
+        const auto& storedName= (i < cfg.cachedAppNames.size()) ? cfg.cachedAppNames[i] : L"";
+
         AppInfo app;
         app.fullPath  = path;
-        app.name      = ProcessLauncher::BaseName(path);
-        app.useCount  = ConfigManager::GetInstance()->GetUseCount(path);
+        app.args      = args;
+        app.name      = storedName.empty() ? ProcessLauncher::BaseName(path) : storedName;
+        app.useCount  = ConfigManager::GetInstance()->GetUseCount(path, args);
         app.hIcon     = IconExtractor::Extract(path, px);
 
         WIN32_FILE_ATTRIBUTE_DATA fa;
@@ -350,17 +355,17 @@ void MainWindow::SetSelection(int filtIdx, bool ctrlHeld) {
 void MainWindow::LaunchApp(int filtIdx) {
     if (filtIdx < 0 || filtIdx >= static_cast<int>(m_filtered.size())) return;
     auto& app = m_apps[m_filtered[filtIdx]];
-    ProcessLauncher::Launch(app.fullPath);
+    ProcessLauncher::Launch(app.fullPath, app.args);
     ++app.useCount;
-    ConfigManager::GetInstance()->IncrementUseCount(app.fullPath);
+    ConfigManager::GetInstance()->IncrementUseCount(app.fullPath, app.args);
 }
 
 void MainWindow::LaunchAppAsAdmin(int filtIdx) {
     if (filtIdx < 0 || filtIdx >= static_cast<int>(m_filtered.size())) return;
     auto& app = m_apps[m_filtered[filtIdx]];
-    ProcessLauncher::LaunchAsAdmin(app.fullPath);
+    ProcessLauncher::LaunchAsAdmin(app.fullPath, app.args);
     ++app.useCount;
-    ConfigManager::GetInstance()->IncrementUseCount(app.fullPath);
+    ConfigManager::GetInstance()->IncrementUseCount(app.fullPath, app.args);
 }
 
 void MainWindow::OpenAppLocation(int filtIdx) {
@@ -370,7 +375,8 @@ void MainWindow::OpenAppLocation(int filtIdx) {
 
 void MainWindow::RemoveApp(int filtIdx) {
     if (filtIdx < 0 || filtIdx >= static_cast<int>(m_filtered.size())) return;
-    ConfigManager::GetInstance()->RemovePath(m_apps[m_filtered[filtIdx]].fullPath);
+    const auto& app = m_apps[m_filtered[filtIdx]];
+    ConfigManager::GetInstance()->RemoveApp(app.fullPath, app.args);
     LoadApps();
 }
 
@@ -416,7 +422,7 @@ void MainWindow::AddFolder() {
 void MainWindow::ImportTaskbar() {
     auto apps = FileScanner::GetTaskbarPinnedApps();
     for (const auto& a : apps)
-        ConfigManager::GetInstance()->AddPath(a);
+        ConfigManager::GetInstance()->AddApp(a.path, a.args, a.name);
     LoadApps();
 }
 
@@ -438,9 +444,9 @@ void MainWindow::DeleteSelected() {
         MB_YESNO | MB_ICONQUESTION);
     if (r != IDYES) return;
 
-    std::vector<std::wstring> toRemove;
-    for (auto& a : m_apps) if (a.isSelected) toRemove.push_back(a.fullPath);
-    for (auto& p : toRemove) ConfigManager::GetInstance()->RemovePath(p);
+    std::vector<std::pair<std::wstring, std::wstring>> toRemove;
+    for (auto& a : m_apps) if (a.isSelected) toRemove.push_back({a.fullPath, a.args});
+    for (auto& p : toRemove) ConfigManager::GetInstance()->RemoveApp(p.first, p.second);
     LoadApps();
 }
 
@@ -467,9 +473,9 @@ void MainWindow::HandleDropFiles(HDROP hDrop) {
             const wchar_t* dot = wcsrchr(path, L'.');
             if (dot) {
                 if (_wcsicmp(dot, L".lnk") == 0) {
-                    std::wstring resolved = FileScanner::ResolveLnk(path);
-                    if (!resolved.empty()) {
-                        ConfigManager::GetInstance()->AddPath(resolved);
+                    auto info = FileScanner::ResolveLnkFull(path);
+                    if (!info.path.empty()) {
+                        ConfigManager::GetInstance()->AddApp(info.path, info.args, info.name);
                         added = true;
                     }
                 } else if (_wcsicmp(dot, L".exe") == 0 ||

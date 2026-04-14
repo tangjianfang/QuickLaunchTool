@@ -19,33 +19,58 @@ public:
 
     AppConfig& Config() { return m_config; }
 
-    // ── Path helpers ──────────────────────────────────────────────────────
+    // ── App helpers ───────────────────────────────────────────────────────
 
-    void AddPath(const std::wstring& path) {
-        for (const auto& p : m_config.cachedAppPaths)
-            if (_wcsicmp(p.c_str(), path.c_str()) == 0) return; // already present
+    // Add an app entry.  For PWAs pass the exe path, the argument string
+    // (e.g. "--profile-directory=Default --app-id=xxx"), and the display
+    // name (e.g. "Gmail").  Regular apps leave args/name empty.
+    void AddApp(const std::wstring& path,
+                const std::wstring& args = L"",
+                const std::wstring& name = L"") {
+        std::wstring key = AppKey(path, args);
+        for (size_t i = 0; i < m_config.cachedAppPaths.size(); ++i) {
+            std::wstring eArgs = (i < m_config.cachedAppArgs.size())
+                                 ? m_config.cachedAppArgs[i] : L"";
+            if (AppKey(m_config.cachedAppPaths[i], eArgs) == key) return;
+        }
         m_config.cachedAppPaths.push_back(path);
+        m_config.cachedAppArgs.push_back(args);
+        m_config.cachedAppNames.push_back(name);
         Save();
     }
 
-    void RemovePath(const std::wstring& path) {
-        auto& v = m_config.cachedAppPaths;
-        auto it = std::remove_if(v.begin(), v.end(),
-            [&](const std::wstring& p){ return _wcsicmp(p.c_str(), path.c_str()) == 0; });
-        if (it == v.end()) return;
-        v.erase(it, v.end());
-        m_config.useCountMap.erase(LowerKey(path));
-        Save();
+    // Convenience alias for callers that only have a plain exe path.
+    void AddPath(const std::wstring& path) { AddApp(path); }
+
+    void RemoveApp(const std::wstring& path, const std::wstring& args = L"") {
+        std::wstring key = AppKey(path, args);
+        for (size_t i = 0; i < m_config.cachedAppPaths.size(); ++i) {
+            std::wstring eArgs = (i < m_config.cachedAppArgs.size())
+                                 ? m_config.cachedAppArgs[i] : L"";
+            if (AppKey(m_config.cachedAppPaths[i], eArgs) != key) continue;
+
+            m_config.cachedAppPaths.erase(m_config.cachedAppPaths.begin() + i);
+            if (i < m_config.cachedAppArgs.size())
+                m_config.cachedAppArgs.erase(m_config.cachedAppArgs.begin() + i);
+            if (i < m_config.cachedAppNames.size())
+                m_config.cachedAppNames.erase(m_config.cachedAppNames.begin() + i);
+            m_config.useCountMap.erase(key);
+            Save();
+            return;
+        }
     }
 
-    void IncrementUseCount(const std::wstring& path) {
-        auto key = LowerKey(path);
+    // Legacy alias – removes by path only (args assumed empty).
+    void RemovePath(const std::wstring& path) { RemoveApp(path, L""); }
+
+    void IncrementUseCount(const std::wstring& path, const std::wstring& args = L"") {
+        auto key = AppKey(path, args);
         ++m_config.useCountMap[key];
         Save();
     }
 
-    int GetUseCount(const std::wstring& path) const {
-        auto key = LowerKey(path);
+    int GetUseCount(const std::wstring& path, const std::wstring& args = L"") const {
+        auto key = AppKey(path, args);
         auto it = m_config.useCountMap.find(key);
         return it != m_config.useCountMap.end() ? it->second : 0;
     }
@@ -86,7 +111,14 @@ public:
         if (m_config.windowH < 300) m_config.windowH = 600;
 
         m_config.cachedAppPaths = JsonHelper::ExtractStringArray(json, L"cachedAppPaths");
+        m_config.cachedAppArgs  = JsonHelper::ExtractStringArray(json, L"cachedAppArgs");
+        m_config.cachedAppNames = JsonHelper::ExtractStringArray(json, L"cachedAppNames");
         m_config.useCountMap    = JsonHelper::ExtractStringIntMap(json, L"useCountMap");
+
+        // Ensure parallel arrays are the same length (pad with empty strings)
+        size_t n = m_config.cachedAppPaths.size();
+        m_config.cachedAppArgs.resize(n);
+        m_config.cachedAppNames.resize(n);
     }
 
     void Save() {
@@ -105,6 +137,8 @@ public:
         fields.push_back({L"windowW",        std::to_wstring(c.windowW)});
         fields.push_back({L"windowH",        std::to_wstring(c.windowH)});
         fields.push_back({L"cachedAppPaths", JsonHelper::StringArrayToJson(c.cachedAppPaths)});
+        fields.push_back({L"cachedAppArgs",  JsonHelper::StringArrayToJson(c.cachedAppArgs)});
+        fields.push_back({L"cachedAppNames", JsonHelper::StringArrayToJson(c.cachedAppNames)});
         fields.push_back({L"useCountMap",    JsonHelper::StringIntMapToJson(c.useCountMap)});
 
         std::wstring json = JsonHelper::BuildObject(fields);
@@ -136,6 +170,16 @@ private:
             m_configPath = L"config.json";
         }
         Load();
+    }
+
+    // Build a unique lowercase key for useCountMap.
+    // For PWAs with args, the key is "path\targs" so two PWAs sharing the
+    // same exe but different --app-id values get distinct counts.
+    static std::wstring AppKey(const std::wstring& path, const std::wstring& args) {
+        std::wstring k = path;
+        if (!args.empty()) { k += L'\t'; k += args; }
+        CharLowerW(k.data());
+        return k;
     }
 
     static std::wstring LowerKey(const std::wstring& s) {
